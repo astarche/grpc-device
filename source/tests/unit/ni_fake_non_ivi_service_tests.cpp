@@ -8,6 +8,7 @@
 #include <iostream>
 #include <numeric>
 #include <string>
+#include <variant>
 
 using namespace nifake_non_ivi_grpc;
 using namespace ::testing;
@@ -940,6 +941,34 @@ TEST_F(NiFakeNonIviServiceTests, SetColors_PassesColorsArrayToLibrary)
   service_.SetColors(&context, &request, &response);
 
   EXPECT_EQ(kDriverSuccess, response.status());
+}
+
+template <class... Ts>
+struct overloaded : Ts... {
+  using Ts::operator()...;
+};
+// explicit deduction guide (not needed as of C++20)
+template <class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
+
+bool test(const std::variant<int32, BeautifulColor>& input)
+{
+  return std::visit(overloaded{[](BeautifulColor attr) { return true; }, [](int32 raw) { return false; }}, input);
+}
+
+TEST_F(NiFakeNonIviServiceTests, Variant)
+{
+  std::variant<int32, BeautifulColor> v;
+  v = 1234;
+  auto int_val = std::get<int32>(v);
+  EXPECT_EQ(1234, int_val);
+  v = BeautifulColor::BEAUTIFUL_COLOR_BLACK;
+  EXPECT_EQ(
+      BeautifulColor::BEAUTIFUL_COLOR_BLACK,
+      std::get<BeautifulColor>(v));
+
+  EXPECT_TRUE(test(BeautifulColor::BEAUTIFUL_COLOR_BLACK));
+  EXPECT_FALSE(test(1234));
 }
 }  // namespace unit
 }  // namespace tests
