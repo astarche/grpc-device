@@ -25,7 +25,7 @@ jobs:
             name: "Windows Build", artifact: "Windows.tar.xz",
             os: windows-latest,
             build_type: "Release", cc: "gcc-9", cxx: "g++-9",
-            cmake_platform: "-A x64"
+            cmake_platform: ""
           }
         - {
             name: "Ubuntu Build", artifact: "Linux.tar.xz",
@@ -55,6 +55,10 @@ jobs:
     - name: Update Submodules
       run: git submodule update --init --recursive
 
+    - name: Install Ninja
+      if: ${{ runner.os == 'Linux' }}
+      run: sudo apt-get install ninja-build
+
     - name: Configure
       shell: cmake -P {0}
       run: |
@@ -70,6 +74,7 @@ jobs:
             -S .
             -B build
             -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
+            -G Ninja
             ${{ matrix.config.cmake_platform }}
           RESULT_VARIABLE result
         )
