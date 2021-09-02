@@ -27,6 +27,8 @@ jobs:
 
     - name: Checkout Repo
       uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
 
     - name: Setup python3
       uses: actions/setup-python@v2
@@ -45,10 +47,9 @@ jobs:
         sudo ./oecore-x86_64-core2-64-toolchain-6.0.sh -y -d ${GITHUB_WORKSPACE}/nilrt-toolchain/
         echo "${GITHUB_WORKSPACE}/nilrt-toolchain/sysroots/x86_64-nilrtsdk-linux/usr/bin/x86_64-nilrt-linux" >> ${GITHUB_PATH}
 
-    - name: Update Submodules
+    - name: Identify Submodules
       id: submodules
       run: |
-        git submodule update --init --recursive
         echo "::set-output name=grpc-commit::$(git rev-parse --short @:./third_party/grpc)"
 
     - name: Cache Host OS gRPC Support
