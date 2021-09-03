@@ -3,8 +3,6 @@ import os
 import argparse
 import importlib
 import importlib.util
-import pkgutil
-from contextlib import contextmanager
 from typing import Dict
 import mako.template
 from pathlib import Path
@@ -107,11 +105,6 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser(description = "Generate files for specified NI driver API gRPC service.")
   parser.add_argument("metadata", help = "The path to the directory containing the metadata for the API being generated.")
   parser.add_argument("--output", "-o", help = "The path to the top-level directory to save the generated files. The API-specific sub-directories will be automatically created.")
-  parser.add_argument("--configure", "-c", action='store_true', help = "Use this flag to generate CMakeLists.txt files during the configure pass.")
-  parser.add_argument("--list", "-l", action='store_true', help = "Use this flag to list files that are generated during the build.")
   args = parser.parse_args()
   output = "." if args.output is None else args.output
-  if args.configure:
-    generate_cmake_lists(args.metadata, output)
-  else:
-    generate_all(args.metadata, output)
+  generate_all(args.metadata, output)

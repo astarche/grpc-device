@@ -42,7 +42,7 @@ def list_output_cpp_files(config: dict, output_dir: str) -> List[str]:
     f
     for f in list_output_files(config, output_dir)
     if f.endswith(".cpp") and not (is_fake and (f.endswith("_library.cpp") or f.endswith("_client.cpp")))
-    # grr -> fake libs not buildable
+    # grr -> fake libs and clients not buildable
   ]
 
 GenerateSourcesRequest = namedtuple(

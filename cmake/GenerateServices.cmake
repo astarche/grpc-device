@@ -43,14 +43,6 @@ function (GenerateServices module_name metadata_files output_files)
 endfunction()
 
 
-function (GenerateCMakeLists)
-  set(gen_command COMMAND ${Python3_EXECUTABLE} ${codegen_dir}/generate_service.py ${metadata_dir}/${module_name}/ -o ${service_output_dir}/)
-  add_custom_command(OUTPUT ${output_files}
-    ${gen_command}
-    COMMENT "Generating proto file and service for ${module_name}"
-    DEPENDS ${metadata_files} ${codegen_scripts})
-endfunction()
-
 function(GenerateServiceCMakeLists)
   execute_process(
     COMMAND ${Python3_EXECUTABLE} ${codegen_dir}/generate_cmake_lists.py ${metadata_dir}/ -o ${service_output_dir}/)
