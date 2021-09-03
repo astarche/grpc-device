@@ -44,21 +44,6 @@ target_link_libraries(driver_services
     nitclk_service
 )
 
-target_include_directories(fake_services
-  INTERFACE 
-    "./"
-)
-
-target_include_directories(driver_services
-  INTERFACE 
-    ${proto_srcs_dir}
-)
-
-target_include_directories(fake_services
-  INTERFACE 
-    ${proto_srcs_dir}
-)
-
 target_link_libraries(driver_clients
   INTERFACE
     nidaqmx_client

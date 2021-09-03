@@ -6,10 +6,8 @@ from pathlib import Path
 def generate_all_cmake_lists(input: str, output: str) -> None:
   subdirectories = [p for p in Path(input).iterdir() if p.is_dir()]
 
-  print(output)
   modules = []
   for module in subdirectories:
-    print(module)
     module_name = module.name
     generate_cmake_lists(str(module), output)
     modules.append(module_name)
