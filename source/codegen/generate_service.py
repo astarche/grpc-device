@@ -3,22 +3,33 @@ import os
 import argparse
 import importlib
 import importlib.util
+import pkgutil
+from contextlib import contextmanager
+from typing import Dict
 import mako.template
+from pathlib import Path
 import metadata_mutation
 from mako.lookup import TemplateLookup
 
-def generate_service_file(metadata, template_file_name, generated_file_suffix, gen_dir):
+def instantiate_template(template_file_name: str) -> mako.template.Template:
   current_dir = os.path.dirname(__file__)
   template_file_path = os.path.join(current_dir, "templates", template_file_name)
   template_directory = os.path.dirname(template_file_path)
+  template_lookup = TemplateLookup(directories = template_directory + "/")
+  return mako.template.Template(filename=template_file_path, lookup=template_lookup)
+
+
+def generate_service_file(metadata, template_file_name, generated_file_suffix, gen_dir):
   module_name = metadata["config"]["module_name"]
   output_dir = os.path.join(gen_dir, module_name)
-  file_name = module_name + generated_file_suffix
+  if generated_file_suffix == "CMakeLists.txt":
+    file_name = generated_file_suffix
+  else:
+    file_name = module_name + generated_file_suffix
   output_file_path = os.path.join(output_dir, file_name)
 
   os.makedirs(output_dir, exist_ok=True)
-  template_lookup = TemplateLookup(directories = template_directory + "/")
-  template = mako.template.Template(filename=template_file_path, lookup=template_lookup)
+  template = template = instantiate_template(template_file_name)
   write_if_changed(
     output_file_path,
     template.render(data=metadata))
@@ -45,6 +56,7 @@ def write_if_changed(output_file_path: str, new_contents: str) -> None:
         f.write(new_contents)
 
 
+
 def mutate_metadata(metadata):
   config = metadata["config"]
   
@@ -62,16 +74,17 @@ def mutate_metadata(metadata):
     attribute_expander.patch_attribute_enum_type(function_name, function)
 
 
-def generate_all(metadata_dir, gen_dir):
-  sys.path.append(metadata_dir)
-  init_file = os.path.join(metadata_dir, "__init__.py")
-  spec = importlib.util.spec_from_file_location("metadata", init_file)
-  module = importlib.util.module_from_spec(spec)
-  spec.loader.exec_module(module)
-
+def load_metadata(metadata_dir: str) -> Dict:
+  metadata_path = Path(metadata_dir)
+  module = importlib.import_module("metadata." + metadata_path.name)
   metadata = module.metadata
   lookup = TemplateLookup(directories = metadata_dir)
   metadata["lookup"] = lookup
+  return metadata
+
+
+def generate_all(metadata_dir, gen_dir):
+  metadata = load_metadata(metadata_dir)
   mutate_metadata(metadata)
   generate_service_file(metadata, "proto.mako", ".proto", gen_dir)
   generate_service_file(metadata, "service.h.mako", "_service.h", gen_dir)
@@ -82,10 +95,23 @@ def generate_all(metadata_dir, gen_dir):
   generate_service_file(metadata, "mock_library.h.mako", "_mock_library.h", gen_dir)
   generate_service_file(metadata, "client.h.mako", "_client.h", gen_dir)
   generate_service_file(metadata, "client.cpp.mako", "_client.cpp", gen_dir)
+  generate_cmake_lists(metadata_dir, gen_dir)
+
+
+def generate_cmake_lists(metadata_dir, gen_dir):
+  metadata = load_metadata(metadata_dir)
+  generate_service_file(metadata, "cmake_lists.mako", "CMakeLists.txt", gen_dir)
+
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(description = "Generate files for specified NI driver API gRPC service.")
   parser.add_argument("metadata", help = "The path to the directory containing the metadata for the API being generated.")
   parser.add_argument("--output", "-o", help = "The path to the top-level directory to save the generated files. The API-specific sub-directories will be automatically created.")
+  parser.add_argument("--configure", "-c", action='store_true', help = "Use this flag to generate CMakeLists.txt files during the configure pass.")
+  parser.add_argument("--list", "-l", action='store_true', help = "Use this flag to list files that are generated during the build.")
   args = parser.parse_args()
-  generate_all(args.metadata, "." if args.output is None else args.output)
+  output = "." if args.output is None else args.output
+  if args.configure:
+    generate_cmake_lists(args.metadata, output)
+  else:
+    generate_all(args.metadata, output)

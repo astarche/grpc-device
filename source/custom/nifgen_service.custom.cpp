@@ -1,4 +1,4 @@
-#include <nifgen/nifgen_service.h>
+#include <nifgen_service.h>
 
 #include <stdexcept>
 

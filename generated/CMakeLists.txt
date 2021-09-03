@@ -1,0 +1,53 @@
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(GenerateGrpcSources)
+
+add_subdirectory(nidaqmx)
+add_subdirectory(nidcpower)
+add_subdirectory(nidigitalpattern)
+add_subdirectory(nidmm)
+add_subdirectory(nifake)
+add_subdirectory(nifake_extension)
+add_subdirectory(nifake_non_ivi)
+add_subdirectory(nifgen)
+add_subdirectory(niscope)
+add_subdirectory(niswitch)
+add_subdirectory(nisync)
+add_subdirectory(nitclk)
+
+add_library(driver_services INTERFACE)
+add_library(fake_services INTERFACE)
+
+target_link_libraries(fake_services
+  INTERFACE
+    nifake_service
+    nifake_extension_service
+    nifake_non_ivi_service
+)
+
+target_link_libraries(driver_services
+  INTERFACE
+    nidaqmx_service
+    nidcpower_service
+    nidigitalpattern_service
+    nidmm_service
+    nifgen_service
+    niscope_service
+    niswitch_service
+    nisync_service
+    nitclk_service
+)
+
+target_include_directories(driver_services
+  INTERFACE "./")
+
+target_include_directories(fake_services
+  INTERFACE "./")
+
+message(STATUS "PROTO DIR => ${proto_srcs_dir}")
+
+target_include_directories(driver_services
+  INTERFACE ${proto_srcs_dir})
+
+target_include_directories(fake_services
+  INTERFACE ${proto_srcs_dir})

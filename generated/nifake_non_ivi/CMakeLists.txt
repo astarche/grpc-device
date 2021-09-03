@@ -1,0 +1,60 @@
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(GenerateGrpcSources)
+include(GenerateServices)
+
+set(metadata_files
+  ${metadata_dir}/nifake_non_ivi/attributes.py
+  ${metadata_dir}/nifake_non_ivi/attributes_addon.py
+  ${metadata_dir}/nifake_non_ivi/config.py
+  ${metadata_dir}/nifake_non_ivi/config_addon.py
+  ${metadata_dir}/nifake_non_ivi/enums.py
+  ${metadata_dir}/nifake_non_ivi/enums_addon.py
+  ${metadata_dir}/nifake_non_ivi/functions.py
+  ${metadata_dir}/nifake_non_ivi/functions_addon.py
+  ${metadata_dir}/nifake_non_ivi/__init__.py
+  )
+
+set(output_files
+  ${service_output_dir}/nifake_non_ivi/nifake_non_ivi_client.cpp
+  ${service_output_dir}/nifake_non_ivi/nifake_non_ivi_client.h
+  ${service_output_dir}/nifake_non_ivi/nifake_non_ivi_library_interface.h
+  ${service_output_dir}/nifake_non_ivi/nifake_non_ivi_library.cpp
+  ${service_output_dir}/nifake_non_ivi/nifake_non_ivi_library.h
+  ${service_output_dir}/nifake_non_ivi/nifake_non_ivi_mock_library.h
+  ${service_output_dir}/nifake_non_ivi/nifake_non_ivi.proto
+  ${service_output_dir}/nifake_non_ivi/nifake_non_ivi_service.cpp
+  ${service_output_dir}/nifake_non_ivi/nifake_non_ivi_service.h
+  )
+
+GenerateGrpcSources(
+  ${service_output_dir}/nifake_non_ivi/nifake_non_ivi.proto
+  ${service_output_dir}/nifake_non_ivi/
+  ${proto_srcs_dir}/nifake_non_ivi.pb.cc
+  ${proto_srcs_dir}/nifake_non_ivi.pb.h
+  ${proto_srcs_dir}/nifake_non_ivi.grpc.pb.cc
+  ${proto_srcs_dir}/nifake_non_ivi.grpc.pb.h
+  )
+
+GenerateServices(
+  nifake_non_ivi
+  ${metadata_files}
+  ${output_files}
+)
+
+add_library(nifake_non_ivi_service
+  ${proto_srcs_dir}/nifake_non_ivi.pb.cc
+  ${proto_srcs_dir}/nifake_non_ivi.grpc.pb.cc
+  ${service_output_dir}/nifake_non_ivi/nifake_non_ivi_service.cpp
+  ${custom_dir}/nifake_non_ivi_service.custom.cpp
+)
+
+target_link_libraries(nifake_non_ivi_service
+  ni_grpc_device_server_core
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+)
+
+
+target_include_directories(nifake_non_ivi_service
+  PUBLIC ${proto_srcs_dir} "./")

@@ -1,0 +1,60 @@
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(GenerateGrpcSources)
+include(GenerateServices)
+
+set(metadata_files
+  ${metadata_dir}/nifake_extension/attributes.py
+  ${metadata_dir}/nifake_extension/attributes_addon.py
+  ${metadata_dir}/nifake_extension/config.py
+  ${metadata_dir}/nifake_extension/config_addon.py
+  ${metadata_dir}/nifake_extension/enums.py
+  ${metadata_dir}/nifake_extension/enums_addon.py
+  ${metadata_dir}/nifake_extension/functions.py
+  ${metadata_dir}/nifake_extension/functions_addon.py
+  ${metadata_dir}/nifake_extension/__init__.py
+  )
+
+set(output_files
+  ${service_output_dir}/nifake_extension/nifake_extension_client.cpp
+  ${service_output_dir}/nifake_extension/nifake_extension_client.h
+  ${service_output_dir}/nifake_extension/nifake_extension_library_interface.h
+  ${service_output_dir}/nifake_extension/nifake_extension_library.cpp
+  ${service_output_dir}/nifake_extension/nifake_extension_library.h
+  ${service_output_dir}/nifake_extension/nifake_extension_mock_library.h
+  ${service_output_dir}/nifake_extension/nifake_extension.proto
+  ${service_output_dir}/nifake_extension/nifake_extension_service.cpp
+  ${service_output_dir}/nifake_extension/nifake_extension_service.h
+  )
+
+GenerateGrpcSources(
+  ${service_output_dir}/nifake_extension/nifake_extension.proto
+  ${service_output_dir}/nifake_extension/
+  ${proto_srcs_dir}/nifake_extension.pb.cc
+  ${proto_srcs_dir}/nifake_extension.pb.h
+  ${proto_srcs_dir}/nifake_extension.grpc.pb.cc
+  ${proto_srcs_dir}/nifake_extension.grpc.pb.h
+  )
+
+GenerateServices(
+  nifake_extension
+  ${metadata_files}
+  ${output_files}
+)
+
+add_library(nifake_extension_service
+  ${proto_srcs_dir}/nifake_extension.pb.cc
+  ${proto_srcs_dir}/nifake_extension.grpc.pb.cc
+  ${service_output_dir}/nifake_extension/nifake_extension_service.cpp
+  ${custom_dir}/nifake_extension_service.custom.cpp
+)
+
+target_link_libraries(nifake_extension_service
+  ni_grpc_device_server_core
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+)
+
+
+target_include_directories(nifake_extension_service
+  PUBLIC ${proto_srcs_dir} "./")

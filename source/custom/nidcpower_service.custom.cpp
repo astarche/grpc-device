@@ -1,4 +1,4 @@
-#include <nidcpower/nidcpower_service.h>
+#include <nidcpower_service.h>
 
 #include <stdexcept>
 

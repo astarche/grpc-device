@@ -67,6 +67,7 @@ config = {
                 'type': 'windll'
             },
             '64bit': {
+                'static_name': 'niFgen',
                 'name': 'niFgen_64.dll',
                 'type': 'cdll'
             }

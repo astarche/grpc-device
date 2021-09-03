@@ -1,3 +1,5 @@
+set(proto_srcs_dir "${CMAKE_CURRENT_BINARY_DIR}/proto")
+
 #----------------------------------------------------------------------
 # Use the grpc targets directly from this build, only when not cross-compiling.
 #----------------------------------------------------------------------
@@ -41,4 +43,3 @@ function(GenerateGrpcSources proto_file proto_path proto_srcs proto_hdrs grpc_sr
       "${proto_file}"
     DEPENDS "${proto_file}" "${session_proto}")
 endfunction()
-

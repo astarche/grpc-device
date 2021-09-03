@@ -1,0 +1,60 @@
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(GenerateGrpcSources)
+include(GenerateServices)
+
+set(metadata_files
+  ${metadata_dir}/nifake/attributes.py
+  ${metadata_dir}/nifake/attributes_addon.py
+  ${metadata_dir}/nifake/config.py
+  ${metadata_dir}/nifake/config_addon.py
+  ${metadata_dir}/nifake/enums.py
+  ${metadata_dir}/nifake/enums_addon.py
+  ${metadata_dir}/nifake/functions.py
+  ${metadata_dir}/nifake/functions_addon.py
+  ${metadata_dir}/nifake/__init__.py
+  )
+
+set(output_files
+  ${service_output_dir}/nifake/nifake_client.cpp
+  ${service_output_dir}/nifake/nifake_client.h
+  ${service_output_dir}/nifake/nifake_library_interface.h
+  ${service_output_dir}/nifake/nifake_library.cpp
+  ${service_output_dir}/nifake/nifake_library.h
+  ${service_output_dir}/nifake/nifake_mock_library.h
+  ${service_output_dir}/nifake/nifake.proto
+  ${service_output_dir}/nifake/nifake_service.cpp
+  ${service_output_dir}/nifake/nifake_service.h
+  )
+
+GenerateGrpcSources(
+  ${service_output_dir}/nifake/nifake.proto
+  ${service_output_dir}/nifake/
+  ${proto_srcs_dir}/nifake.pb.cc
+  ${proto_srcs_dir}/nifake.pb.h
+  ${proto_srcs_dir}/nifake.grpc.pb.cc
+  ${proto_srcs_dir}/nifake.grpc.pb.h
+  )
+
+GenerateServices(
+  nifake
+  ${metadata_files}
+  ${output_files}
+)
+
+add_library(nifake_service
+  ${proto_srcs_dir}/nifake.pb.cc
+  ${proto_srcs_dir}/nifake.grpc.pb.cc
+  ${service_output_dir}/nifake/nifake_service.cpp
+  ${custom_dir}/nifake_service.custom.cpp
+)
+
+target_link_libraries(nifake_service
+  ni_grpc_device_server_core
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+)
+
+
+target_include_directories(nifake_service
+  PUBLIC ${proto_srcs_dir} "./")

@@ -1,4 +1,4 @@
-#include <nisync/nisync_service.h>
+#include <nisync_service.h>
 
 namespace nisync_grpc {
 
