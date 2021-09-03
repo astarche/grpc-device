@@ -5,7 +5,6 @@ include(GenerateGrpcSources)
 # Proto file
 #----------------------------------------------------------------------
 
-set(proto_srcs_dir "${CMAKE_CURRENT_BINARY_DIR}/core/proto")
 file(MAKE_DIRECTORY ${proto_srcs_dir})
 
 get_filename_component(session_proto "session.proto" ABSOLUTE)

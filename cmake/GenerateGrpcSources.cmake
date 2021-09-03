@@ -1,4 +1,4 @@
-set(proto_srcs_dir "${CMAKE_CURRENT_BINARY_DIR}/proto")
+set(proto_srcs_dir "${PROJECT_BINARY_DIR}/proto")
 
 include(ImportGrpc)
 
@@ -17,5 +17,5 @@ function(GenerateGrpcSources proto_file proto_path proto_srcs proto_hdrs grpc_sr
       -I ${CMAKE_SOURCE_DIR}/source/protobuf
       --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
       "${proto_file}"
-    DEPENDS "${proto_file}" "${session_proto}")
+    DEPENDS "${proto_file}")
 endfunction()
