@@ -27,9 +27,3 @@ target_link_libraries(driver_services
     ${cmake_helpers.service_library_name(driver_name)}
 % endfor
 )
-
-target_include_directories(driver_services
-  INTERFACE "./")
-
-target_include_directories(fake_services
-  INTERFACE "./")

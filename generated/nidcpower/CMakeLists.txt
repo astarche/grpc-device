@@ -63,4 +63,10 @@ if(WIN32)
 endif()
 
 target_include_directories(nidcpower_service
-  PUBLIC ${proto_srcs_dir} "./")
+  PUBLIC 
+    ${proto_srcs_dir} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)

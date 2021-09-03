@@ -57,4 +57,10 @@ target_link_libraries(nifake_non_ivi_service
 
 
 target_include_directories(nifake_non_ivi_service
-  PUBLIC ${proto_srcs_dir} "./")
+  PUBLIC 
+    ${proto_srcs_dir} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)

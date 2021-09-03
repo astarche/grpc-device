@@ -72,4 +72,10 @@ endif()
 % endif
 
 target_include_directories(${server_library_name}
-  PUBLIC ${r"${proto_srcs_dir}"} "./")
+  PUBLIC 
+    ${r"${proto_srcs_dir}"} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)

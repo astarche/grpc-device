@@ -57,4 +57,10 @@ target_link_libraries(nifake_service
 
 
 target_include_directories(nifake_service
-  PUBLIC ${proto_srcs_dir} "./")
+  PUBLIC 
+    ${proto_srcs_dir} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)

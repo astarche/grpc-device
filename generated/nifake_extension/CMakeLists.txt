@@ -57,4 +57,10 @@ target_link_libraries(nifake_extension_service
 
 
 target_include_directories(nifake_extension_service
-  PUBLIC ${proto_srcs_dir} "./")
+  PUBLIC 
+    ${proto_srcs_dir} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)
