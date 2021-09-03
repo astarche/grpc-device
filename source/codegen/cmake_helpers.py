@@ -35,24 +35,59 @@ def list_output_files(config: dict, output_dir: str) -> List[str]:
   return [f"{output_dir}/{module_name}/{module_name}{s}" for s in suffixes]
 
 
+def is_client_file(file: str) -> bool:
+  name, _ = file.rsplit(".")
+  return name.endswith("_client")
+
+
+def list_service_output_cpp_files(config: dict, output_dir: str) -> List[str]:
+  return [
+    f
+    for f in list_output_cpp_files(config, output_dir)
+    if not is_client_file(f)
+  ]
+
+
+def list_client_output_cpp_files(config: dict, output_dir: str) -> List[str]:
+  return [
+    f
+    for f in list_output_cpp_files(config, output_dir)
+    if is_client_file(f)
+  ]
+
+
+def is_fake(module_name: str) -> bool:
+  return module_name.startswith("nifake")
+
+
+# grr -> fake libs and clients not buildable
+def is_supported_cpp_file(module_name: str, file_name: str) -> bool:
+  if not file_name.endswith("cpp"):
+    return False
+  if is_fake(module_name):
+    return not (
+      file_name.endswith("_library.cpp") 
+      or file_name.endswith("_client.cpp")
+    )
+  return True
+
+
 def list_output_cpp_files(config: dict, output_dir: str) -> List[str]:
   module_name = config["module_name"]
-  is_fake = module_name.startswith("nifake")
   return [
     f
     for f in list_output_files(config, output_dir)
-    if f.endswith(".cpp") and not (is_fake and (f.endswith("_library.cpp") or f.endswith("_client.cpp")))
-    # grr -> fake libs and clients not buildable
+    if is_supported_cpp_file(module_name, f)
   ]
+
 
 GenerateSourcesRequest = namedtuple(
   "GenerateSourcesRequest",
-  ["output_dir", "proto_file", "proto_path", "proto_srcs", "proto_hdrs", "grpc_srcs", "grpc_hdrs"])
+  ["proto_file", "proto_path", "proto_srcs", "proto_hdrs", "grpc_srcs", "grpc_hdrs"])
 
 
 def create_generate_sources_request(module_name: str, proto_srcs_dir: str, service_output_dir: str) -> GenerateSourcesRequest:
   return GenerateSourcesRequest(
-    f"{proto_srcs_dir}",
     f"{service_output_dir}/{module_name}/{module_name}.proto",
     f"{service_output_dir}/{module_name}/",
     f"{proto_srcs_dir}/{module_name}.pb.cc",
@@ -64,6 +99,10 @@ def create_generate_sources_request(module_name: str, proto_srcs_dir: str, servi
 
 def service_library_name(driver_module_name: str) -> str:
   return f"{driver_module_name}_service"
+
+
+def client_library_name(driver_module_name: str) -> str:
+  return f"{driver_module_name}_client"
 
 
 def is_fake(driver: str) -> bool:

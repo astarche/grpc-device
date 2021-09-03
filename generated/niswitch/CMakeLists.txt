@@ -50,7 +50,6 @@ GenerateServices(
 add_library(niswitch_service
   ${proto_srcs_dir}/niswitch.pb.cc
   ${proto_srcs_dir}/niswitch.grpc.pb.cc
-  ${service_output_dir}/niswitch/niswitch_client.cpp
   ${service_output_dir}/niswitch/niswitch_library.cpp
   ${service_output_dir}/niswitch/niswitch_service.cpp
   ${custom_dir}/niswitch_service.custom.cpp
@@ -74,6 +73,26 @@ if(WIN32)
 endif()
 
 target_include_directories(niswitch_service
+  PUBLIC 
+    ${proto_srcs_dir} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)
+add_library(niswitch_client
+  ${proto_srcs_dir}/niswitch.pb.cc
+  ${proto_srcs_dir}/niswitch.grpc.pb.cc
+  ${service_output_dir}/niswitch/niswitch_client.cpp
+)
+
+target_link_libraries(niswitch_client
+  ni_grpc_device_server_core
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+)
+
+target_include_directories(niswitch_client
   PUBLIC 
     ${proto_srcs_dir} 
   PRIVATE

@@ -50,7 +50,6 @@ GenerateServices(
 add_library(nifgen_service
   ${proto_srcs_dir}/nifgen.pb.cc
   ${proto_srcs_dir}/nifgen.grpc.pb.cc
-  ${service_output_dir}/nifgen/nifgen_client.cpp
   ${service_output_dir}/nifgen/nifgen_library.cpp
   ${service_output_dir}/nifgen/nifgen_service.cpp
   ${custom_dir}/nifgen_service.custom.cpp
@@ -74,6 +73,26 @@ if(WIN32)
 endif()
 
 target_include_directories(nifgen_service
+  PUBLIC 
+    ${proto_srcs_dir} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)
+add_library(nifgen_client
+  ${proto_srcs_dir}/nifgen.pb.cc
+  ${proto_srcs_dir}/nifgen.grpc.pb.cc
+  ${service_output_dir}/nifgen/nifgen_client.cpp
+)
+
+target_link_libraries(nifgen_client
+  ni_grpc_device_server_core
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+)
+
+target_include_directories(nifgen_client
   PUBLIC 
     ${proto_srcs_dir} 
   PRIVATE

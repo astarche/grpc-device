@@ -15,6 +15,7 @@ add_subdirectory(${driver_name})
 % endfor
 
 add_library(driver_services INTERFACE)
+add_library(driver_clients INTERFACE)
 add_library(fake_services INTERFACE)
 
 target_link_libraries(fake_services
@@ -28,5 +29,12 @@ target_link_libraries(driver_services
   INTERFACE
 % for driver_name in cmake_helpers.filter_real_drivers_only(drivers):
     ${cmake_helpers.service_library_name(driver_name)}
+% endfor
+)
+
+target_link_libraries(driver_clients
+  INTERFACE
+% for driver_name in cmake_helpers.filter_real_drivers_only(drivers):
+    ${cmake_helpers.client_library_name(driver_name)}
 % endfor
 )

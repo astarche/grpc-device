@@ -165,6 +165,7 @@ add_executable(SystemTestsRunner
 target_link_libraries(SystemTestsRunner
   ni_grpc_device_server_core
   driver_services
+  driver_clients
   gtest
   gmock
   ${_GRPC_GRPCPP}

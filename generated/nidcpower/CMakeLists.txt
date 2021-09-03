@@ -50,7 +50,6 @@ GenerateServices(
 add_library(nidcpower_service
   ${proto_srcs_dir}/nidcpower.pb.cc
   ${proto_srcs_dir}/nidcpower.grpc.pb.cc
-  ${service_output_dir}/nidcpower/nidcpower_client.cpp
   ${service_output_dir}/nidcpower/nidcpower_library.cpp
   ${service_output_dir}/nidcpower/nidcpower_service.cpp
   ${custom_dir}/nidcpower_service.custom.cpp
@@ -74,6 +73,26 @@ if(WIN32)
 endif()
 
 target_include_directories(nidcpower_service
+  PUBLIC 
+    ${proto_srcs_dir} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)
+add_library(nidcpower_client
+  ${proto_srcs_dir}/nidcpower.pb.cc
+  ${proto_srcs_dir}/nidcpower.grpc.pb.cc
+  ${service_output_dir}/nidcpower/nidcpower_client.cpp
+)
+
+target_link_libraries(nidcpower_client
+  ni_grpc_device_server_core
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+)
+
+target_include_directories(nidcpower_client
   PUBLIC 
     ${proto_srcs_dir} 
   PRIVATE

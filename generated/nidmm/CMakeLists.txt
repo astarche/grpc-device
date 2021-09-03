@@ -50,7 +50,6 @@ GenerateServices(
 add_library(nidmm_service
   ${proto_srcs_dir}/nidmm.pb.cc
   ${proto_srcs_dir}/nidmm.grpc.pb.cc
-  ${service_output_dir}/nidmm/nidmm_client.cpp
   ${service_output_dir}/nidmm/nidmm_library.cpp
   ${service_output_dir}/nidmm/nidmm_service.cpp
   ${custom_dir}/nidmm_service.custom.cpp
@@ -74,6 +73,26 @@ if(WIN32)
 endif()
 
 target_include_directories(nidmm_service
+  PUBLIC 
+    ${proto_srcs_dir} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)
+add_library(nidmm_client
+  ${proto_srcs_dir}/nidmm.pb.cc
+  ${proto_srcs_dir}/nidmm.grpc.pb.cc
+  ${service_output_dir}/nidmm/nidmm_client.cpp
+)
+
+target_link_libraries(nidmm_client
+  ni_grpc_device_server_core
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+)
+
+target_include_directories(nidmm_client
   PUBLIC 
     ${proto_srcs_dir} 
   PRIVATE

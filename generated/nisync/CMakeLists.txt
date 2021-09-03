@@ -50,7 +50,6 @@ GenerateServices(
 add_library(nisync_service
   ${proto_srcs_dir}/nisync.pb.cc
   ${proto_srcs_dir}/nisync.grpc.pb.cc
-  ${service_output_dir}/nisync/nisync_client.cpp
   ${service_output_dir}/nisync/nisync_library.cpp
   ${service_output_dir}/nisync/nisync_service.cpp
   ${custom_dir}/nisync_service.custom.cpp
@@ -74,6 +73,26 @@ if(WIN32)
 endif()
 
 target_include_directories(nisync_service
+  PUBLIC 
+    ${proto_srcs_dir} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)
+add_library(nisync_client
+  ${proto_srcs_dir}/nisync.pb.cc
+  ${proto_srcs_dir}/nisync.grpc.pb.cc
+  ${service_output_dir}/nisync/nisync_client.cpp
+)
+
+target_link_libraries(nisync_client
+  ni_grpc_device_server_core
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+)
+
+target_include_directories(nisync_client
   PUBLIC 
     ${proto_srcs_dir} 
   PRIVATE

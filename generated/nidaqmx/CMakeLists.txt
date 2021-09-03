@@ -50,7 +50,6 @@ GenerateServices(
 add_library(nidaqmx_service
   ${proto_srcs_dir}/nidaqmx.pb.cc
   ${proto_srcs_dir}/nidaqmx.grpc.pb.cc
-  ${service_output_dir}/nidaqmx/nidaqmx_client.cpp
   ${service_output_dir}/nidaqmx/nidaqmx_library.cpp
   ${service_output_dir}/nidaqmx/nidaqmx_service.cpp
   ${custom_dir}/nidaqmx_service.custom.cpp
@@ -74,6 +73,26 @@ if(WIN32)
 endif()
 
 target_include_directories(nidaqmx_service
+  PUBLIC 
+    ${proto_srcs_dir} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)
+add_library(nidaqmx_client
+  ${proto_srcs_dir}/nidaqmx.pb.cc
+  ${proto_srcs_dir}/nidaqmx.grpc.pb.cc
+  ${service_output_dir}/nidaqmx/nidaqmx_client.cpp
+)
+
+target_link_libraries(nidaqmx_client
+  ni_grpc_device_server_core
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+)
+
+target_include_directories(nidaqmx_client
   PUBLIC 
     ${proto_srcs_dir} 
   PRIVATE

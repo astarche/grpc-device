@@ -50,7 +50,6 @@ GenerateServices(
 add_library(niscope_service
   ${proto_srcs_dir}/niscope.pb.cc
   ${proto_srcs_dir}/niscope.grpc.pb.cc
-  ${service_output_dir}/niscope/niscope_client.cpp
   ${service_output_dir}/niscope/niscope_library.cpp
   ${service_output_dir}/niscope/niscope_service.cpp
   ${custom_dir}/niscope_service.custom.cpp
@@ -74,6 +73,26 @@ if(WIN32)
 endif()
 
 target_include_directories(niscope_service
+  PUBLIC 
+    ${proto_srcs_dir} 
+  PRIVATE
+    "./"
+  INTERFACE
+    "../"
+)
+add_library(niscope_client
+  ${proto_srcs_dir}/niscope.pb.cc
+  ${proto_srcs_dir}/niscope.grpc.pb.cc
+  ${service_output_dir}/niscope/niscope_client.cpp
+)
+
+target_link_libraries(niscope_client
+  ni_grpc_device_server_core
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+)
+
+target_include_directories(niscope_client
   PUBLIC 
     ${proto_srcs_dir} 
   PRIVATE

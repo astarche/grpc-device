@@ -21,6 +21,7 @@ add_subdirectory(nisync)
 add_subdirectory(nitclk)
 
 add_library(driver_services INTERFACE)
+add_library(driver_clients INTERFACE)
 add_library(fake_services INTERFACE)
 
 target_link_libraries(fake_services
@@ -56,4 +57,17 @@ target_include_directories(driver_services
 target_include_directories(fake_services
   INTERFACE 
     ${proto_srcs_dir}
+)
+
+target_link_libraries(driver_clients
+  INTERFACE
+    nidaqmx_client
+    nidcpower_client
+    nidigitalpattern_client
+    nidmm_client
+    nifgen_client
+    niscope_client
+    niswitch_client
+    nisync_client
+    nitclk_client
 )
