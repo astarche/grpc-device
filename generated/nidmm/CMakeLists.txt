@@ -59,7 +59,7 @@ target_link_libraries(nidmm_service
 
 if(WIN32)
   target_link_libraries(nidmm_service Delayimp ${CMAKE_CURRENT_SOURCE_DIR}/../../imports/lib/win64/nidmm.lib)
-  set_target_properties(nidmm_service PROPERTIES LINK_FLAGS "/DELAYLOAD:nidmm_64.dll")
+  target_link_options(nidmm_service INTERFACE "/DELAYLOAD:nidmm_64.dll")
 endif()
 
 target_include_directories(nidmm_service

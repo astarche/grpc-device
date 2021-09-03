@@ -59,7 +59,7 @@ target_link_libraries(nidcpower_service
 
 if(WIN32)
   target_link_libraries(nidcpower_service Delayimp ${CMAKE_CURRENT_SOURCE_DIR}/../../imports/lib/win64/nidcpower.lib)
-  set_target_properties(nidcpower_service PROPERTIES LINK_FLAGS "/DELAYLOAD:nidcpower_64.dll")
+  target_link_options(nidcpower_service INTERFACE "/DELAYLOAD:nidcpower_64.dll")
 endif()
 
 target_include_directories(nidcpower_service

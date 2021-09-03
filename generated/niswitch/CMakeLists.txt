@@ -59,7 +59,7 @@ target_link_libraries(niswitch_service
 
 if(WIN32)
   target_link_libraries(niswitch_service Delayimp ${CMAKE_CURRENT_SOURCE_DIR}/../../imports/lib/win64/niswitch.lib)
-  set_target_properties(niswitch_service PROPERTIES LINK_FLAGS "/DELAYLOAD:niswitch_64.dll")
+  target_link_options(niswitch_service INTERFACE "/DELAYLOAD:niswitch_64.dll")
 endif()
 
 target_include_directories(niswitch_service

@@ -21,27 +21,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-#----------------------------------------------------------------------
-# Find python3 for the build system
-#----------------------------------------------------------------------
-find_package(Python3 COMPONENTS Interpreter)
-if(NOT ${Python3_FOUND})
-  message(WARNING "Python3 not found. Python3 is required for code generation.")
-endif()
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-include(GenerateGrpcSources)
-
-#----------------------------------------------------------------------
-# Get list of NI Driver APIs and directories to generate from
-#----------------------------------------------------------------------
-set(metadata_dir ${CMAKE_SOURCE_DIR}/source/codegen/metadata)
-set(service_output_dir ${CMAKE_SOURCE_DIR}/generated)
-set(codegen_dir ${CMAKE_SOURCE_DIR}/source/codegen)
-set(custom_dir ${CMAKE_SOURCE_DIR}/source/custom)
-
-execute_process(
-  COMMAND ${Python3_EXECUTABLE} ${codegen_dir}/generate_cmake_lists.py ${metadata_dir}/ -o ${service_output_dir}/)
+include(ImportGrpc)
+include(GenerateServices)
 
 # ni_fake_service_tests.cpp and several DAQ cpp files exceed the MSVC limit for the number of sections 
 # in an obj file defined by PE-COFF. This line disables the limit.
@@ -51,6 +33,7 @@ endif(MSVC)
 
 add_subdirectory("source/server")
 add_subdirectory("source/protobuf")
+GenerateServiceCMakeLists()
 add_subdirectory("generated")
 
 add_executable(ni_grpc_device_server
@@ -74,8 +57,6 @@ target_link_libraries(ni_grpc_device_server
   )
 
 set_target_properties(ni_grpc_device_server PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
-
-
 
 #----------------------------------------------------------------------
 # Copy server_config.json to binary output directory
@@ -107,9 +88,9 @@ add_executable(IntegrationTestsRunner
     "source/tests/integration/session_utilities_service_tests_endtoend.cpp"
 )
 
-    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-    find_package(Threads REQUIRED)
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
 
 target_link_libraries(IntegrationTestsRunner
     ni_grpc_device_server_core

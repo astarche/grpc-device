@@ -33,11 +33,3 @@ target_include_directories(driver_services
 
 target_include_directories(fake_services
   INTERFACE "./")
-
-message(STATUS "${r"PROTO DIR => ${proto_srcs_dir}"}")
-
-target_include_directories(driver_services
-  INTERFACE ${r"${proto_srcs_dir}"})
-
-target_include_directories(fake_services
-  INTERFACE ${r"${proto_srcs_dir}"})

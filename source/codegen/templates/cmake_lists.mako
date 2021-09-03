@@ -67,8 +67,7 @@ target_link_libraries(${server_library_name}
 % if static_library_name:
 if(WIN32)
   target_link_libraries(${server_library_name} Delayimp ${CMAKE_CURRENT_SOURCE_DIR}/../../imports/lib/win64/${static_library_name}.lib)
-  set_target_properties(${server_library_name} PROPERTIES LINK_FLAGS "/DELAYLOAD:${dll_name}")
-  ## set(ni_grpc_device_server CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DELAYLOAD:nicaiu.dll /DELAYLOAD:nidcpower.dll /DELAYLOAD:niDigital_64.dll /DELAYLOAD:nidmm_64.dll /DELAYLOAD:niFgen_64.dll /DELAYLOAD:niScope.dll /DELAYLOAD:niswitch.dll /DELAYLOAD:nisync.dll /DELAYLOAD:niTClk_64.dll")
+  target_link_options(${server_library_name} INTERFACE "/DELAYLOAD:${dll_name}")
 endif()
 % endif
 

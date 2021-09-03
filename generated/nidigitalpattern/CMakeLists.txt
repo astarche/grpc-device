@@ -59,7 +59,7 @@ target_link_libraries(nidigitalpattern_service
 
 if(WIN32)
   target_link_libraries(nidigitalpattern_service Delayimp ${CMAKE_CURRENT_SOURCE_DIR}/../../imports/lib/win64/niDigital.lib)
-  set_target_properties(nidigitalpattern_service PROPERTIES LINK_FLAGS "/DELAYLOAD:niDigital_64.dll")
+  target_link_options(nidigitalpattern_service INTERFACE "/DELAYLOAD:niDigital_64.dll")
 endif()
 
 target_include_directories(nidigitalpattern_service

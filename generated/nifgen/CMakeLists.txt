@@ -59,7 +59,7 @@ target_link_libraries(nifgen_service
 
 if(WIN32)
   target_link_libraries(nifgen_service Delayimp ${CMAKE_CURRENT_SOURCE_DIR}/../../imports/lib/win64/niFgen.lib)
-  set_target_properties(nifgen_service PROPERTIES LINK_FLAGS "/DELAYLOAD:niFgen_64.dll")
+  target_link_options(nifgen_service INTERFACE "/DELAYLOAD:niFgen_64.dll")
 endif()
 
 target_include_directories(nifgen_service

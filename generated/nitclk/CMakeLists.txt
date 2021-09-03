@@ -59,7 +59,7 @@ target_link_libraries(nitclk_service
 
 if(WIN32)
   target_link_libraries(nitclk_service Delayimp ${CMAKE_CURRENT_SOURCE_DIR}/../../imports/lib/win64/niTclk.lib)
-  set_target_properties(nitclk_service PROPERTIES LINK_FLAGS "/DELAYLOAD:nitclk_64.dll")
+  target_link_options(nitclk_service INTERFACE "/DELAYLOAD:nitclk_64.dll")
 endif()
 
 target_include_directories(nitclk_service

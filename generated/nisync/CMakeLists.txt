@@ -59,7 +59,7 @@ target_link_libraries(nisync_service
 
 if(WIN32)
   target_link_libraries(nisync_service Delayimp ${CMAKE_CURRENT_SOURCE_DIR}/../../imports/lib/win64/nisync.lib)
-  set_target_properties(nisync_service PROPERTIES LINK_FLAGS "/DELAYLOAD:nisync.dll")
+  target_link_options(nisync_service INTERFACE "/DELAYLOAD:nisync.dll")
 endif()
 
 target_include_directories(nisync_service

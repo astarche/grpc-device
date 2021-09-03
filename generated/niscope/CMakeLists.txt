@@ -59,7 +59,7 @@ target_link_libraries(niscope_service
 
 if(WIN32)
   target_link_libraries(niscope_service Delayimp ${CMAKE_CURRENT_SOURCE_DIR}/../../imports/lib/win64/niScope.lib)
-  set_target_properties(niscope_service PROPERTIES LINK_FLAGS "/DELAYLOAD:niScope_64.dll")
+  target_link_options(niscope_service INTERFACE "/DELAYLOAD:niScope_64.dll")
 endif()
 
 target_include_directories(niscope_service

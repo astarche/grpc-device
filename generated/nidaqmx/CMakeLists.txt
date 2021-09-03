@@ -59,7 +59,7 @@ target_link_libraries(nidaqmx_service
 
 if(WIN32)
   target_link_libraries(nidaqmx_service Delayimp ${CMAKE_CURRENT_SOURCE_DIR}/../../imports/lib/win64/nidaqmx.lib)
-  set_target_properties(nidaqmx_service PROPERTIES LINK_FLAGS "/DELAYLOAD:nicaiu.dll")
+  target_link_options(nidaqmx_service INTERFACE "/DELAYLOAD:nicaiu.dll")
 endif()
 
 target_include_directories(nidaqmx_service
