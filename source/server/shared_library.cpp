@@ -71,7 +71,7 @@ void SharedLibrary::unload()
   }
 }
 
-const void* SharedLibrary::get_function_pointer(const char* name) const
+void* SharedLibrary::get_function_pointer(const char* name) const
 {
   if (!handle_) {
     return nullptr;
