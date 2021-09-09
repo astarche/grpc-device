@@ -25,6 +25,11 @@ jobs:
       with:
         access_token: ${{ github.token }}
 
+    - name: Set Swap Space
+      uses: pierotofy/set-swap-space@master
+      with:
+        swap-size-gb: 16
+
     - name: Checkout Repo
       uses: actions/checkout@v2
 
