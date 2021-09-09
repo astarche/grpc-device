@@ -34,7 +34,7 @@ class SharedLibrary {
   LibraryHandle get_handle() const;
   void load();
   void unload();
-  void* get_function_pointer(const char* name) const;
+  const void* get_function_pointer(const char* name) const;
   bool function_exists(const char* name) const;
   void set_library_name(const char* library_name);
   std::string get_library_name() const;
