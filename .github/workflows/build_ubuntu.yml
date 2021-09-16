@@ -33,6 +33,7 @@ jobs:
       run: |
         apt update
         apt install -y cmake python3-pip
+        update-alternatives --install /usr/bin/python python /usr/bin/python3 10
     
     - name: Checkout Repo
       uses: actions/checkout@v2
