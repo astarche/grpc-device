@@ -18,6 +18,8 @@ jobs:
       env:
         CMAKE_VERSION: 3.18.3
         BUILD_TYPE: Release
+        CC: gcc-9
+        CXX: g++-9
       ports:
         - 80
       options: --cpus 2
@@ -35,7 +37,7 @@ jobs:
         apt install -y software-properties-common python-software-properties
         add-apt-repository -y ppa:git-core/ppa
         apt update
-        apt install -y cmake python3-pip git
+        apt install -y cmake python3-pip git gcc-9
         update-alternatives --install /usr/bin/python python /usr/bin/python3 10
     
     - name: Checkout Repo
@@ -54,19 +56,13 @@ jobs:
     - name: Configure
       shell: cmake -P {0}
       run: |
-        set(ENV{CC} ${{ matrix.config.cc }})
-        set(ENV{CXX} ${{ matrix.config.cxx }})
         set(path_separator ":")
-        if ("${{ runner.os }}" STREQUAL "Windows")
-          set(path_separator ";")
-        endif()
         set(ENV{PATH} "$ENV{GITHUB_WORKSPACE}${path_separator}$ENV{PATH}")
         execute_process(
           COMMAND cmake
             -S .
             -B build
             -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
-            ${{ matrix.config.cmake_platform }}
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
@@ -77,7 +73,7 @@ jobs:
       shell: cmake -P {0}
       run: |
         execute_process(
-          COMMAND cmake --build build --config $ENV{BUILD_TYPE} ${{ matrix.config.cmake_number_of_jobs }}
+          COMMAND cmake --build build --config $ENV{BUILD_TYPE} -j 2
           RESULT_VARIABLE result
           OUTPUT_VARIABLE output
           ERROR_VARIABLE output
@@ -106,7 +102,7 @@ jobs:
         endif()
 
     - name: Tar Linux Server Binaries
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases')) && (runner.os == 'Linux') }}
+      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       run: >-
         tar -cvzf ni-grpc-device-server-linux-glibc2_23-x64.tar.gz
         -C ${GITHUB_WORKSPACE}/build
@@ -118,14 +114,14 @@ jobs:
 
     - name: Upload Linux Server Binaries Artifact
       uses: actions/upload-artifact@v2
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases')) && (runner.os == 'Linux') }}
+      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       with:
         name: ni-grpc-device-server-linux-glibc2_23-x64
         path: ni-grpc-device-server-linux-glibc2_23-x64.tar.gz
         retention-days: 5
 
     - name: Tar Linux Test Binaries
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases')) && (runner.os == 'Linux') }}
+      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       run: >-
         tar -cvzf ni-grpc-device-tests-linux-glibc2_23-x64.tar.gz
         -C ${GITHUB_WORKSPACE}/build
@@ -141,14 +137,14 @@ jobs:
 
     - name: Upload Linux Test Binaries Artifact
       uses: actions/upload-artifact@v2
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases')) && (runner.os == 'Linux') }}
+      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       with:
         name: ni-grpc-device-tests-linux-glibc2_23-x64
         path: ni-grpc-device-tests-linux-glibc2_23-x64.tar.gz
         retention-days: 5
 
     - name: Stage Linux Client Files
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases')) && (runner.os == 'Linux') }}
+      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       run: |
         mkdir -p ${{ runner.temp }}/staging/proto
         cp generated/**/*.proto source/protobuf/*.proto ${{ runner.temp }}/staging/proto
@@ -158,81 +154,9 @@ jobs:
 
     - name: Upload Linux Client Files Artifact
       uses: actions/upload-artifact@v2
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases')) && (runner.os == 'Linux') }}
+      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       with:
         name: ni-grpc-device-client-Linux
         path: ni-grpc-device-client.tar.gz
         retention-days: 5
-
-    - name: Upload Windows Server Binaries Artifact
-      uses: actions/upload-artifact@v2
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases')) && (runner.os == 'Windows') }}
-      with:
-        name: ni-grpc-device-server-windows-x64
-        path: |
-          build/Release/ni_grpc_device_server.exe
-          build/Release/server_config.json
-          LICENSE
-          ThirdPartyNotices.txt
-        retention-days: 5
-
-    - name: Upload Windows Test Binaries Artifact
-      uses: actions/upload-artifact@v2
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases')) && (runner.os == 'Windows') }}
-      with:
-        name: ni-grpc-device-tests-windows-x64
-        path: |
-          build/Release/certs/
-          build/Release/IntegrationTestsRunner.exe
-          build/Release/TestApi.dll
-          build/Release/SystemTestsRunner.exe
-          build/Release/test_mutual_tls_config.json
-          build/Release/UnitTestsRunner.exe
-          LICENSE
-          ThirdPartyNotices.txt
-        retention-days: 5
-
-    - name: Stage Windows Client Files
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases')) && (runner.os == 'Windows') }}
-      shell: powershell
-      run: |
-        mkdir "${{ runner.temp }}/staging/proto"
-        Copy-Item "source/protobuf/*.proto", "generated/**/*.proto" -Exclude "*nifake*" -Destination "${{ runner.temp }}/staging/proto/"
-        Copy-Item "examples/" -Recurse -Destination "${{ runner.temp }}/staging/"
-        Copy-Item "LICENSE","ThirdPartyNotices.txt" -Destination "${{ runner.temp }}/staging/"
-
-    - name: Upload Windows Client Files Artifact
-      uses: actions/upload-artifact@v2
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases')) && (runner.os == 'Windows') }}
-      with:
-        name: ni-grpc-device-client
-        path: |
-          ${{ runner.temp }}/staging
-        retention-days: 5
-
-  trigger_main_ci:
-    name: Trigger Main CI
-    needs: build
-    runs-on: windows-latest
-    if: ${{ github.repository == 'ni/grpc-device' && github.ref == 'refs/heads/main' }}
-    steps:
-    - name: Trigger Main CI
-      uses: Azure/pipelines@v1
-      with:
-        azure-devops-project-url: 'https://dev.azure.com/ni/DevCentral'
-        azure-pipeline-name: 'ni-central-grpc-device-main-desktop'
-        azure-devops-token: ${{ secrets.AZDO_PIPELINE_TRIGGERS }}
-
-  trigger_release_ci:
-    name: Trigger Release CI
-    needs: build
-    runs-on: windows-latest
-    if: ${{ github.repository == 'ni/grpc-device' && startsWith(github.ref, 'refs/heads/releases') }}
-    steps:
-    - name: Trigger Release CI
-      uses: Azure/pipelines@v1
-      with:
-        azure-devops-project-url: 'https://dev.azure.com/ni/DevCentral'
-        azure-pipeline-name: 'ni-central-grpc-device-release-desktop'
-        azure-devops-token: ${{ secrets.AZDO_PIPELINE_TRIGGERS }}
 
