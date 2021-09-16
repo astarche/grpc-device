@@ -53,6 +53,7 @@ jobs:
       run: |
         pwd
         ls
+        cmake --version
 
     - name: Configure
       shell: cmake -P {0}
@@ -63,8 +64,8 @@ jobs:
           COMMAND cmake
             -S .
             -B build
-            -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
-            
+            -DCMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
+
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
