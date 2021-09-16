@@ -32,7 +32,7 @@ jobs:
     - name: Install dependencies
       run: |
         apt update
-        apt-get install software-properties-common python-software-properties
+        apt install -y software-properties-common python-software-properties
         add-apt-repository -y ppa:git-core/ppa
         apt update
         apt install -y cmake python3-pip git
