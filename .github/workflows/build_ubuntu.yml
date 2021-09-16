@@ -32,7 +32,7 @@ jobs:
     - name: Install dependencies
       run: |
         apt update
-        apt install -y cmake python3-pip
+        apt install -y cmake python3-pip git
         update-alternatives --install /usr/bin/python python /usr/bin/python3 10
     
     - name: Checkout Repo
