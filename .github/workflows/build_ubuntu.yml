@@ -18,8 +18,6 @@ jobs:
       env:
         CMAKE_VERSION: 3.18.3
         BUILD_TYPE: Release
-        CC: gcc-9
-        CXX: g++-9
       ports:
         - 80
       options: --cpus 2
@@ -39,6 +37,8 @@ jobs:
         apt update
         apt install -y cmake python3-pip git gcc-9 g++-9
         update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
+        update-alternatives --config gcc
     
     - name: Checkout Repo
       uses: actions/checkout@v2
