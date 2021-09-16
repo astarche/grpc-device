@@ -31,6 +31,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        add-apt-repository ppa:git-core/ppa
         apt update
         apt install -y cmake python3-pip git
         update-alternatives --install /usr/bin/python python /usr/bin/python3 10
