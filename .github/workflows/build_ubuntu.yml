@@ -35,9 +35,9 @@ jobs:
       run: |
         apt update
         apt install -y software-properties-common python-software-properties
-        add-apt-repository -y ppa:git-core/ppa
+        add-apt-repository -y ppa:git-core/ppa ppa:ubuntu-toolchain-r/test
         apt update
-        apt install -y cmake python3-pip git gcc-9
+        apt install -y cmake python3-pip git gcc-9 g++-9
         update-alternatives --install /usr/bin/python python /usr/bin/python3 10
     
     - name: Checkout Repo
