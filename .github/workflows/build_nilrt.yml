@@ -123,7 +123,6 @@ jobs:
           RESULT_VARIABLE result
           OUTPUT_VARIABLE output
           ERROR_VARIABLE output
-          ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
         )
         if (NOT result EQUAL 0)
           string(REGEX MATCH "FAILED:.*$" error_message "${output}")
