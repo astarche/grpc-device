@@ -33,7 +33,7 @@ jobs:
       run: |
         apt update
         apt install -y software-properties-common python-software-properties lsb-release
-        wget --no-check-certificate -vO - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
+        wget --no-check-certificate -vO - https://apt.kitware.com/keys/kitware-archive-latest.asc | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
         apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
         add-apt-repository -y ppa:git-core/ppa 
         add-apt-repository -y ppa:ubuntu-toolchain-r/test
