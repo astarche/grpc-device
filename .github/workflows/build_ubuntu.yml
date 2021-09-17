@@ -80,7 +80,7 @@ jobs:
         endif()
 
     - name: Build
-      run: cmake --build build -CRelease -j 2
+      run: cmake --build build --config Release -j 2
 
     - name: Run Tests
       shell: cmake -P {0}
