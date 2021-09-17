@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12.0)
+cmake_minimum_required(VERSION 3.19.0)
 
 project(ni_grpc_device_server C CXX)
 
