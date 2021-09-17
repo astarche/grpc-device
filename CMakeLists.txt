@@ -45,7 +45,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #----------------------------------------------------------------------
 # Find python3 for the build system
 #----------------------------------------------------------------------
-find_package(Python3 COMPONENTS Interpreter)
+find_package(Python3 3.6...<3.10 COMPONENTS Interpreter)
 if(NOT ${Python3_FOUND})
   message(WARNING "Python3 not found. Python3 is required for code generation.")
 endif()

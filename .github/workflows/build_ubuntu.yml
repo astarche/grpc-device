@@ -36,8 +36,7 @@ jobs:
         add-apt-repository -y ppa:git-core/ppa 
         add-apt-repository -y ppa:ubuntu-toolchain-r/test
         apt update
-        apt install -y python3-pip git gcc-9 g++-9
-        update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+        apt install -y python3.9 python3.9-pip git gcc-9 g++-9
         update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
         update-alternatives --config gcc
     
@@ -54,7 +53,7 @@ jobs:
         submodules: 'recursive'
 
     - name: Install mako
-      run: python -m pip install mako
+      run: python3.9 -m pip install mako
 
     - name: Print state
       run: |
