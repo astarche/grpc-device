@@ -33,16 +33,21 @@ jobs:
       run: |
         apt update
         apt install -y software-properties-common python-software-properties lsb-release
-        wget --no-check-certificate -vO - https://apt.kitware.com/keys/kitware-archive-latest.asc | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
-        apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
         add-apt-repository -y ppa:git-core/ppa 
         add-apt-repository -y ppa:ubuntu-toolchain-r/test
         apt update
-        apt install -y cmake python3-pip git gcc-9 g++-9
+        apt install -y python3-pip git gcc-9 g++-9
         update-alternatives --install /usr/bin/python python /usr/bin/python3 10
         update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
         update-alternatives --config gcc
     
+    - name: Setup cmake
+      uses: jwlawson/actions-setup-cmake@v1.9
+      with:
+        cmake-version: '3.16.x'
+    - name: Use cmake
+      run: cmake --version
+
     - name: Checkout Repo
       uses: actions/checkout@v2
       with:
