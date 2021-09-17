@@ -100,7 +100,6 @@ jobs:
         endif()
 
     - name: Tar Linux Server Binaries
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       run: >-
         tar -cvzf ni-grpc-device-server-linux-glibc2_23-x64.tar.gz
         -C ${GITHUB_WORKSPACE}/build
@@ -112,14 +111,12 @@ jobs:
 
     - name: Upload Linux Server Binaries Artifact
       uses: actions/upload-artifact@v2
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       with:
         name: ni-grpc-device-server-linux-glibc2_23-x64
         path: ni-grpc-device-server-linux-glibc2_23-x64.tar.gz
-        retention-days: 5
+        retention-days: 1
 
     - name: Tar Linux Test Binaries
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       run: >-
         tar -cvzf ni-grpc-device-tests-linux-glibc2_23-x64.tar.gz
         -C ${GITHUB_WORKSPACE}/build
@@ -135,14 +132,12 @@ jobs:
 
     - name: Upload Linux Test Binaries Artifact
       uses: actions/upload-artifact@v2
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       with:
         name: ni-grpc-device-tests-linux-glibc2_23-x64
         path: ni-grpc-device-tests-linux-glibc2_23-x64.tar.gz
-        retention-days: 5
+        retention-days: 1
 
     - name: Stage Linux Client Files
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       run: |
         mkdir -p ${{ runner.temp }}/staging/proto
         cp generated/**/*.proto source/protobuf/*.proto ${{ runner.temp }}/staging/proto
@@ -152,9 +147,8 @@ jobs:
 
     - name: Upload Linux Client Files Artifact
       uses: actions/upload-artifact@v2
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases'))}}
       with:
         name: ni-grpc-device-client-Linux
         path: ni-grpc-device-client.tar.gz
-        retention-days: 5
+        retention-days: 1
 
