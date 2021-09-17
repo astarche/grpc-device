@@ -35,6 +35,7 @@ jobs:
         apt install -y software-properties-common python-software-properties lsb-release
         add-apt-repository -y ppa:git-core/ppa 
         add-apt-repository -y ppa:ubuntu-toolchain-r/test
+        add-apt-repository -y ppa:deadsnakes/ppa
         apt update
         apt install -y python3.8 python3.8-pip git gcc-9 g++-9
         update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
