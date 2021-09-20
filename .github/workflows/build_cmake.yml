@@ -189,8 +189,8 @@ jobs:
       with:
         name: ni-grpc-device-server-windows-x64
         path: |
-          build/Release/*.exe
-          build/Release/*.json
+          build/Release/ni_grpc_device_server.exe
+          build/Release/server_config.json
         retention-days: 5
 
     - name: Upload Windows Test Binaries Artifact
