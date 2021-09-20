@@ -35,6 +35,7 @@ config = {
                 'type': 'windll'
             },
             '64bit': {
+                'static_name': 'nidmm',
                 'name': 'nidmm_64.dll',
                 'type': 'cdll'
             }

@@ -10,29 +10,8 @@ endif()
 #----------------------------------------------------------------------
 # Use the grpc targets directly from this build, only when not cross-compiling.
 #----------------------------------------------------------------------
-if(CMAKE_CROSSCOMPILING)
-  find_program(_PROTOBUF_PROTOC protoc)
-  find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
-
-  if(NOT _GRPC_DEVICE_NILRT_LEGACY_TOOLCHAIN)
-    find_package(gRPC REQUIRED)
-    find_library(_REFLECTION grpc++_reflection)
-    find_library(_GRPC_GRPCPP grpc++)
-    find_library(_PROTOBUF_LIBPROTOBUF protobuf)
-  else()
-    add_subdirectory(third_party/grpc ${CMAKE_CURRENT_BINARY_DIR}/grpc EXCLUDE_FROM_ALL)
-    set(_REFLECTION grpc++_reflection)
-    set(_GRPC_GRPCPP grpc++)
-    set(_PROTOBUF_LIBPROTOBUF libprotobuf)
-  endif()
-
-else()
+if(NOT CMAKE_CROSSCOMPILING OR _GRPC_DEVICE_NILRT_LEGACY_TOOLCHAIN)
   add_subdirectory(third_party/grpc ${CMAKE_CURRENT_BINARY_DIR}/grpc EXCLUDE_FROM_ALL)
-  set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
-  set(_REFLECTION grpc++_reflection)
-  set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc_cpp_plugin>)
-  set(_GRPC_GRPCPP grpc++)
-  set(_PROTOBUF_LIBPROTOBUF libprotobuf)
 endif()
 
 #----------------------------------------------------------------------
@@ -42,171 +21,24 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-#----------------------------------------------------------------------
-# Find python3 for the build system
-#----------------------------------------------------------------------
-find_package(Python3 COMPONENTS Interpreter)
-if(NOT ${Python3_FOUND})
-  message(WARNING "Python3 not found. Python3 is required for code generation.")
-endif()
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(ImportGrpc)
+include(GenerateServices)
 
-#----------------------------------------------------------------------
-# Include generated *.pb.h files
-#----------------------------------------------------------------------
-set(proto_srcs_dir "${CMAKE_CURRENT_BINARY_DIR}/proto")
-file(MAKE_DIRECTORY ${proto_srcs_dir})
-include_directories(
-  "${proto_srcs_dir}"
-  "./generated"
-  "./imports/include"
-  "./source"
-)
-if(WIN32)
-  link_directories("./imports/lib/win64")
-endif()
+# ni_fake_service_tests.cpp and several DAQ cpp files exceed the MSVC limit for the number of sections 
+# in an obj file defined by PE-COFF. This line disables the limit.
+if(MSVC)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING")
+endif(MSVC)
 
-#----------------------------------------------------------------------
-# Get list of NI Driver APIs and directories to generate from
-#----------------------------------------------------------------------
-set(metadata_dir ${CMAKE_SOURCE_DIR}/source/codegen/metadata)
-set(service_output_dir ${CMAKE_SOURCE_DIR}/generated)
-set(codegen_dir ${CMAKE_SOURCE_DIR}/source/codegen)
-set(custom_dir ${CMAKE_SOURCE_DIR}/source/custom)
-set(nidrivers "nidaqmx" "nidcpower" "nidigitalpattern" "nidmm" "nifake" "nifake_extension" "nifake_non_ivi" "nifgen" "niscope" "niswitch" "nisync" "nitclk")
-
-#----------------------------------------------------------------------
-# Create NI Driver APIs proto and server files
-#----------------------------------------------------------------------
-set(codegen_scripts
-  "${codegen_dir}/client_helpers.py"
-  "${codegen_dir}/common_helpers.py"
-  "${codegen_dir}/generate_service.py"
-  "${codegen_dir}/service_helpers.py"
-  "${codegen_dir}/proto_helpers.py"
-  "${codegen_dir}/metadata_mutation.py"
-  "${codegen_dir}/templates/client.cpp.mako"
-  "${codegen_dir}/templates/client.h.mako"
-  "${codegen_dir}/templates/client_helpers.mako"
-  "${codegen_dir}/templates/library_interface.h.mako"
-  "${codegen_dir}/templates/library.cpp.mako"
-  "${codegen_dir}/templates/library.h.mako"
-  "${codegen_dir}/templates/mock_library.h.mako"
-  "${codegen_dir}/templates/proto.mako"
-  "${codegen_dir}/templates/proto_helpers.mako"
-  "${codegen_dir}/templates/service.cpp.mako"
-  "${codegen_dir}/templates/service_helpers.mako"
-  "${codegen_dir}/templates/service.h.mako")
-
-# Populated in the api loop below.
-set(nidriver_service_srcs "")
-set(nidriver_client_srcs "")
-
-
-foreach(api ${nidrivers})
-  set(codegen_dependencies
-    "${metadata_dir}/${api}/attributes.py"
-    "${metadata_dir}/${api}/attributes_addon.py"
-    "${metadata_dir}/${api}/config.py"
-    "${metadata_dir}/${api}/config_addon.py"
-    "${metadata_dir}/${api}/enums.py"
-    "${metadata_dir}/${api}/enums_addon.py"
-    "${metadata_dir}/${api}/functions.py"
-    "${metadata_dir}/${api}/functions_addon.py"
-    "${metadata_dir}/${api}/__init__.py")
-  set(output_files
-    ${service_output_dir}/${api}/${api}_client.cpp
-    ${service_output_dir}/${api}/${api}_client.h
-    ${service_output_dir}/${api}/${api}_library_interface.h
-    ${service_output_dir}/${api}/${api}_library.cpp
-    ${service_output_dir}/${api}/${api}_library.h
-    ${service_output_dir}/${api}/${api}_mock_library.h
-    ${service_output_dir}/${api}/${api}.proto
-    ${service_output_dir}/${api}/${api}_service.cpp
-    ${service_output_dir}/${api}/${api}_service.h)
-  set(gen_command COMMAND ${Python3_EXECUTABLE} ${codegen_dir}/generate_service.py ${metadata_dir}/${api}/ -o ${service_output_dir}/)
-  if (NOT api MATCHES "^nifake.*")
-    set(nidriver_service_srcs
-      ${nidriver_service_srcs}
-      "${service_output_dir}/${api}/${api}_service.cpp"
-      "${service_output_dir}/${api}/${api}_library.cpp"
-      "${custom_dir}/${api}_service.custom.cpp")
-    set(nidriver_client_srcs
-      ${nidriver_client_srcs}
-      "${service_output_dir}/${api}/${api}_client.cpp")
-  endif()
-  add_custom_command(OUTPUT ${output_files}
-    ${gen_command}
-    COMMENT "Generating proto file and service for ${api}"
-    DEPENDS ${codegen_dependencies} ${codegen_scripts})
-endforeach()
-
-#----------------------------------------------------------------------
-# Proto file
-#----------------------------------------------------------------------
-get_filename_component(session_proto "source/protobuf/session.proto" ABSOLUTE)
-get_filename_component(session_proto_path "${session_proto}" PATH)
-
-#----------------------------------------------------------------------
-# Generate sources from proto files
-#----------------------------------------------------------------------
-function(GenerateGrpcSources proto_file proto_path proto_srcs proto_hdrs grpc_srcs grpc_hdrs)
-  get_filename_component(proto_out_path "${proto_srcs}" PATH)
-  add_custom_command(
-    OUTPUT "${proto_srcs}" "${proto_hdrs}" "${grpc_srcs}" "${grpc_hdrs}"
-    COMMAND ${_PROTOBUF_PROTOC}
-    ARGS --grpc_out "${proto_out_path}"
-      --cpp_out "${proto_out_path}"
-      -I "${proto_path}"
-      -I ${CMAKE_SOURCE_DIR}/third_party/grpc/third_party/protobuf/src/
-      -I ${CMAKE_SOURCE_DIR}/source/protobuf
-      --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-      "${proto_file}"
-    DEPENDS "${proto_file}" "${session_proto}")
-endfunction()
-
-set(session_proto_srcs "${proto_srcs_dir}/session.pb.cc")
-set(session_proto_hdrs "${proto_srcs_dir}/session.pb.h")
-set(session_grpc_srcs "${proto_srcs_dir}/session.grpc.pb.cc")
-set(session_grpc_hdrs "${proto_srcs_dir}/session.grpc.pb.h")
-GenerateGrpcSources(
-  ${session_proto}
-  ${session_proto_path}
-  ${session_proto_srcs}
-  ${session_proto_hdrs}
-  ${session_grpc_srcs}
-  ${session_grpc_hdrs})
-
-foreach(api ${nidrivers})
-  GenerateGrpcSources(
-    ${service_output_dir}/${api}/${api}.proto
-    ${service_output_dir}/${api}/
-    "${proto_srcs_dir}/${api}.pb.cc"
-    "${proto_srcs_dir}/${api}.pb.h"
-    "${proto_srcs_dir}/${api}.grpc.pb.cc"
-    "${proto_srcs_dir}/${api}.grpc.pb.h")
-  if(NOT api MATCHES "^nifake.*")
-    set(nidriver_service_srcs
-      ${nidriver_service_srcs}
-      "${proto_srcs_dir}/${api}.pb.cc"
-      "${proto_srcs_dir}/${api}.grpc.pb.cc")
-  endif()
-endforeach()
+add_subdirectory("source/server")
+add_subdirectory("source/protobuf")
+GenerateServiceCMakeLists()
+add_subdirectory("generated")
 
 add_executable(ni_grpc_device_server
-   "source/server/core_server.cpp"
-   "source/server/device_enumerator.cpp"
-   "source/server/feature_toggles.cpp"
-   "source/server/logging.cpp"
-   "source/server/semaphore.cpp"
-   "source/server/server_configuration_parser.cpp"
-   "source/server/server_security_configuration.cpp"
-   "source/server/session_repository.cpp"
-   "source/server/session_utilities_service.cpp"
-   "source/server/shared_library.cpp"
-   "source/server/syscfg_library.cpp"
-   ${session_proto_srcs}
-   ${session_grpc_srcs}
-   ${nidriver_service_srcs})
+  "source/server/core_server.cpp"
+  ${nidriver_service_srcs})
 
 if(CMAKE_SYSTEM_NAME STREQUAL Linux)
   target_sources(ni_grpc_device_server
@@ -215,20 +47,16 @@ if(CMAKE_SYSTEM_NAME STREQUAL Linux)
 endif()
 
 target_link_libraries(ni_grpc_device_server
-   ${_REFLECTION}
-   ${_GRPC_GRPCPP}
-   ${_PROTOBUF_LIBPROTOBUF}
-   ${CMAKE_DL_LIBS}
-   nlohmann_json::nlohmann_json
-   )
+  ni_grpc_device_server_core
+  driver_services
+  ${_REFLECTION}
+  ${_GRPC_GRPCPP}
+  ${_PROTOBUF_LIBPROTOBUF}
+  ${CMAKE_DL_LIBS}
+  nlohmann_json::nlohmann_json
+  )
 
 set_target_properties(ni_grpc_device_server PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
-
-if(WIN32)
-  target_link_libraries(ni_grpc_device_server Delayimp nidaqmx nidcpower niDigital nidmm niFgen niScope niswitch nisync niTClk)
-  set_target_properties(ni_grpc_device_server PROPERTIES LINK_FLAGS "/DELAYLOAD:nicaiu.dll /DELAYLOAD:nidcpower.dll /DELAYLOAD:niDigital_64.dll /DELAYLOAD:nidmm_64.dll /DELAYLOAD:niFgen_64.dll /DELAYLOAD:niScope.dll /DELAYLOAD:niswitch.dll /DELAYLOAD:nisync.dll /DELAYLOAD:niTClk_64.dll")
-  set(ni_grpc_device_server CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DELAYLOAD:nicaiu.dll /DELAYLOAD:nidcpower.dll /DELAYLOAD:niDigital_64.dll /DELAYLOAD:nidmm_64.dll /DELAYLOAD:niFgen_64.dll /DELAYLOAD:niScope.dll /DELAYLOAD:niswitch.dll /DELAYLOAD:nisync.dll /DELAYLOAD:niTClk_64.dll")
-endif()
 
 #----------------------------------------------------------------------
 # Copy server_config.json to binary output directory
@@ -258,25 +86,15 @@ add_executable(IntegrationTestsRunner
     "source/tests/integration/ni_fake_non_ivi_service_tests_endtoend.cpp"
     "source/tests/integration/session_utilities_service_tests.cpp"
     "source/tests/integration/session_utilities_service_tests_endtoend.cpp"
-    "source/server/device_enumerator.cpp"
-    "source/server/feature_toggles.cpp"
-    "source/server/semaphore.cpp"
-    "source/server/session_repository.cpp"
-    "source/server/session_utilities_service.cpp"
-    "source/server/shared_library.cpp"
-    ${session_proto_srcs}
-    ${session_grpc_srcs}
-    "${proto_srcs_dir}/nifake_non_ivi.pb.cc"
-    "${proto_srcs_dir}/nifake_non_ivi.grpc.pb.cc"
-    "${service_output_dir}/nifake_non_ivi/nifake_non_ivi_service.cpp"
-    "${custom_dir}/nifake_non_ivi_service.custom.cpp"
 )
 
-    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-    find_package(Threads REQUIRED)
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
 
 target_link_libraries(IntegrationTestsRunner
+    ni_grpc_device_server_core
+    fake_services
     gtest
     gmock
     ${_GRPC_GRPCPP}
@@ -299,48 +117,17 @@ add_executable(UnitTestsRunner
     "source/tests/unit/ni_fake_service_tests.cpp"
     "source/tests/unit/shared_library_tests.cpp"
     "source/tests/unit/syscfg_library_tests.cpp"
-    "source/server/device_enumerator.cpp"
-    "source/server/feature_toggles.cpp"
-    "source/server/semaphore.cpp"
-    "source/server/server_configuration_parser.cpp"
-    "source/server/server_security_configuration.cpp"
-    "source/server/session_repository.cpp"
-    "source/server/shared_library.cpp"
-    "source/server/syscfg_library.cpp"
-    ${session_proto_srcs}
-    ${session_grpc_srcs}
-    "${proto_srcs_dir}/nifake.pb.cc"
-    "${proto_srcs_dir}/nifake.grpc.pb.cc"
-    "${proto_srcs_dir}/nifake_extension.pb.cc"
-    "${proto_srcs_dir}/nifake_extension.grpc.pb.cc"
-    "${proto_srcs_dir}/nifake_non_ivi.pb.cc"
-    "${proto_srcs_dir}/nifake_non_ivi.grpc.pb.cc"
-    "${service_output_dir}/nifake/nifake_service.cpp"
-    "${service_output_dir}/nifake_extension/nifake_extension_service.cpp"
-    "${service_output_dir}/nifake_non_ivi/nifake_non_ivi_service.cpp"
-    "${custom_dir}/nifake_service.custom.cpp"
-    "${custom_dir}/nifake_extension_service.custom.cpp"
-    "${custom_dir}/nifake_non_ivi_service.custom.cpp"
 )
 
-# ni_fake_service_tests.cpp and several DAQ cpp files exceed the MSVC limit for the number of sections 
-# in an obj file defined by PE-COFF. This line disables the limit.
-if(MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING")
-endif(MSVC)
-
-target_include_directories(UnitTestsRunner
-    PRIVATE "${service_output_dir}/nifake"
-    PRIVATE "${service_output_dir}/nifake_extension"
-    PRIVATE "${service_output_dir}/nifake_non_ivi")
-
 target_link_libraries(UnitTestsRunner
-    gtest
-    gmock
-    ${_GRPC_GRPCPP}
-    ${CMAKE_DL_LIBS}
-    Threads::Threads
-    nlohmann_json::nlohmann_json)
+  ni_grpc_device_server_core
+  fake_services
+  gtest
+  gmock
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+  Threads::Threads
+  nlohmann_json::nlohmann_json)
 
 #----------------------------------------------------------------------
 # Copy test asset certificates to binary output certs sub-directory
@@ -373,29 +160,17 @@ add_executable(SystemTestsRunner
     "source/tests/system/nisync_driver_api_tests.cpp"
     "source/tests/system/nisync_session_tests.cpp"
     "source/tests/system/nitclk_driver_api_tests.cpp"
-    "source/server/device_enumerator.cpp"
-    "source/server/feature_toggles.cpp"
-    "source/server/session_repository.cpp"
-    "source/server/semaphore.cpp"
-    "source/server/session_utilities_service.cpp"
-    "source/server/shared_library.cpp"
-    "source/server/syscfg_library.cpp"
-    ${session_proto_srcs}
-    ${session_grpc_srcs}
-    ${nidriver_service_srcs}
-    ${nidriver_client_srcs})
+)
 
 target_link_libraries(SystemTestsRunner
-    gtest
-    gmock
-    ${_GRPC_GRPCPP}
-    ${CMAKE_DL_LIBS})
-
-if(WIN32)
-    target_link_libraries(SystemTestsRunner Delayimp nidaqmx nidcpower niDigital nidmm niFgen niScope niswitch nisync niTClk)
-    set_target_properties(SystemTestsRunner PROPERTIES LINK_FLAGS "/DELAYLOAD:nicaiu.dll /DELAYLOAD:nidcpower.dll /DELAYLOAD:niDigital_64.dll /DELAYLOAD:nidmm_64.dll /DELAYLOAD:niFgen_64.dll /DELAYLOAD:niScope.dll /DELAYLOAD:niswitch.dll /DELAYLOAD:nisync.dll /DELAYLOAD:niTClk_64.dll")
-    set(SystemTestsRunner CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DELAYLOAD:nicaiu.dll /DELAYLOAD:nidcpower.dll /DELAYLOAD:niDigital_64.dll /DELAYLOAD:nidmm_64.dll /DELAYLOAD:niFgen_64.dll /DELAYLOAD:niScope.dll /DELAYLOAD:niswitch.dll /DELAYLOAD:nisync.dll /DELAYLOAD:niTClk_64.dll")
-endif()
+  ni_grpc_device_server_core
+  driver_services
+  driver_clients
+  gtest
+  gmock
+  ${_GRPC_GRPCPP}
+  ${CMAKE_DL_LIBS}
+  )
 
 # Hook up different google test runners to CTest
 # add_test( NAME UnitTests COMMAND UnitTestsRunner )

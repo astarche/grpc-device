@@ -1,4 +1,5 @@
-#include <nitclk/nitclk_service.h>
+#include <nitclk_service.h>
+
 #include <stdexcept>
 
 namespace nitclk_grpc {

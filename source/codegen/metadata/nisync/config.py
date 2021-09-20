@@ -20,7 +20,7 @@ config = {
         "Linux": {"64bit": {"name": "nisync", "type": "cdll"}},
         "Windows": {
             "32bit": {"name": "nisync.dll", "type": "windll"},
-            "64bit": {"name": "nisync.dll", "type": "cdll"},
+            "64bit": {"static_name": "nisync", "name": "nisync.dll", "type": "cdll"},
         },
     },
     "metadata_version": "2.0",

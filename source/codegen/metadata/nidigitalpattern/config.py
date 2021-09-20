@@ -37,6 +37,7 @@ config = {
                 'type': 'windll'
             },
             '64bit': {
+                'static_name': 'niDigital',
                 'name': 'niDigital_64.dll',
                 'type': 'cdll'
             }

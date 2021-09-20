@@ -147,6 +147,7 @@ config = {
                 'type': 'windll'
             },
             '64bit': {
+                'static_name': 'nidaqmx',
                 'name': 'nicaiu.dll',
                 'type': 'cdll'
             }

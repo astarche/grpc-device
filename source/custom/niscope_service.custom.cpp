@@ -1,4 +1,4 @@
-#include <niscope/niscope_service.h>
+#include <niscope_service.h>
 
 #include <stdexcept>
 

@@ -26,6 +26,7 @@ config = {
                 'type': 'windll'
             },
             '64bit': {
+                'static_name': 'niTclk',
                 'name': 'nitclk_64.dll',
                 'type': 'cdll'
             }
