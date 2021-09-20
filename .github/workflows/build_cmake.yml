@@ -175,12 +175,12 @@ jobs:
 
     - name: Upload Windows Server Binaries Artifact
       uses: actions/upload-artifact@v2
-      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases')) && (runner.os == 'Windows') }}
+      if: ${{ (runner.os == 'Windows') }}
       with:
         name: ni-grpc-device-server-windows-x64
         path: |
-          build/Release/ni_grpc_device_server.exe
-          build/Release/server_config.json
+          build/Release/*.exe
+          build/Release/*.json
           LICENSE
           ThirdPartyNotices.txt
         retention-days: 5
