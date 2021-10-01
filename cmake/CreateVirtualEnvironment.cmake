@@ -91,16 +91,18 @@ function(CreateVirtualEnvironment TARGET)
     add_custom_command(
             OUTPUT ${CFG_FILE}
             COMMAND ${Python3_EXECUTABLE} -m venv ${VENV}
+            DEPENDS ${ARG_REQUIREMENTS_TXT}
     )
     set(OUTPUT_FILE ${VENV}/environment.txt)
+    set(WRONG_OUTPUT_FILE ${VENV}/environment2.txt)
     add_custom_command(
             OUTPUT ${OUTPUT_FILE}
             COMMAND ${INSTALL_CMD}
-            COMMAND ${BIN_DIR}/pip freeze > ${OUTPUT_FILE}
+            COMMAND ${BIN_DIR}/pip freeze > ${WRONG_OUTPUT_FILE}
             DEPENDS ${CFG_FILE} ${ARG_SOURCES} ${ARG_REQUIREMENTS_TXT}
     )
 
-    add_custom_target(${TARGET} DEPENDS ${OUTPUT_FILE})
+    # add_custom_target(${TARGET} DEPENDS ${OUTPUT_FILE})
 
     if (ARG_OUT_VENV_DIR)
         set(${ARG_OUT_VENV_DIR} ${VENV} PARENT_SCOPE)
