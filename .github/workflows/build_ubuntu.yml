@@ -1,0 +1,154 @@
+name: Ubuntu build
+
+on:
+  push:
+    branches:
+      - main
+      - 'releases/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build with ubuntu 16.04
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:16.04
+      env:
+        CMAKE_VERSION: 3.18.3
+        BUILD_TYPE: Release
+      ports:
+        - 80
+      options: --cpus 2
+
+    steps:
+    - name: Cancel Build(s)
+      uses: styfle/cancel-workflow-action@0.7.0
+      if: "github.ref != 'refs/heads/main'"
+      with:
+        access_token: ${{ github.token }}
+
+    - name: Install dependencies
+      run: |
+        apt update
+        apt install -y software-properties-common python-software-properties lsb-release
+        add-apt-repository -y ppa:git-core/ppa 
+        add-apt-repository -y ppa:ubuntu-toolchain-r/test
+        add-apt-repository -y ppa:deadsnakes/ppa
+        apt update
+        apt install -y python3.8 python3.8-distutils git gcc-9 g++-9 wget build-essential
+        wget https://bootstrap.pypa.io/get-pip.py
+        python3.8 get-pip.py
+        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
+        update-alternatives --config gcc
+    
+    - name: Setup cmake
+      uses: jwlawson/actions-setup-cmake@v1.9
+      with:
+        cmake-version: '3.20.x'
+    - name: Use cmake
+      run: cmake --version
+
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+
+    - name: Install mako
+      run: python3.8 -m pip install mako
+
+    - name: Print state
+      run: |
+        pwd
+        ls
+        cmake --version
+
+    - name: Configure
+      shell: cmake -P {0}
+      run: |
+        set(path_separator ":")
+        set(ENV{PATH} "$ENV{GITHUB_WORKSPACE}${path_separator}$ENV{PATH}")
+        execute_process(
+          COMMAND cmake
+            -S .
+            -B build
+            -DCMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
+
+          RESULT_VARIABLE result
+        )
+        if (NOT result EQUAL 0)
+          message(FATAL_ERROR "Bad exit status")
+        endif()
+
+    - name: Build
+      run: cmake --build build --config Release -j 2
+
+    - name: Run Tests
+      shell: cmake -P {0}
+      run: |
+        include(ProcessorCount)
+        ProcessorCount(N)
+
+        execute_process(
+          COMMAND ctest -j ${N} -C $ENV{BUILD_TYPE} -E System --output-on-failure
+          WORKING_DIRECTORY build
+          RESULT_VARIABLE result
+        )
+        if (NOT result EQUAL 0)
+            message(FATAL_ERROR "Running tests failed!")
+        endif()
+
+    - name: Tar Linux Server Binaries
+      run: >-
+        tar -cvzf ni-grpc-device-server-linux-glibc2_23-x64.tar.gz
+        -C ${GITHUB_WORKSPACE}/build
+        ni_grpc_device_server
+        server_config.json
+        -C ${GITHUB_WORKSPACE}
+        LICENSE
+        ThirdPartyNotices.txt
+
+    - name: Upload Linux Server Binaries Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ni-grpc-device-server-linux-glibc2_23-x64
+        path: ni-grpc-device-server-linux-glibc2_23-x64.tar.gz
+        retention-days: 1
+
+    - name: Tar Linux Test Binaries
+      run: >-
+        tar -cvzf ni-grpc-device-tests-linux-glibc2_23-x64.tar.gz
+        -C ${GITHUB_WORKSPACE}/build
+        certs/
+        IntegrationTestsRunner
+        libTestApi.so
+        SystemTestsRunner
+        test_mutual_tls_config.json
+        UnitTestsRunner
+        -C ${GITHUB_WORKSPACE}
+        LICENSE
+        ThirdPartyNotices.txt
+
+    - name: Upload Linux Test Binaries Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ni-grpc-device-tests-linux-glibc2_23-x64
+        path: ni-grpc-device-tests-linux-glibc2_23-x64.tar.gz
+        retention-days: 1
+
+    - name: Stage Linux Client Files
+      run: |
+        mkdir -p ${{ runner.temp }}/staging/proto
+        cp generated/**/*.proto source/protobuf/*.proto ${{ runner.temp }}/staging/proto
+        cp -r examples/ ${{ runner.temp }}/staging/
+        cp LICENSE ThirdPartyNotices.txt ${{ runner.temp }}/staging/
+        tar -cvzf ni-grpc-device-client.tar.gz -C ${{ runner.temp }}/staging/ --exclude *nifake* examples/ proto/ LICENSE ThirdPartyNotices.txt
+
+    - name: Upload Linux Client Files Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ni-grpc-device-client-Linux
+        path: ni-grpc-device-client.tar.gz
+        retention-days: 1
+
