@@ -1687,6 +1687,40 @@ TEST_F(NiDAQmxDriverApiTests, SetWrongDataTypeAttribute_ReturnsNotValidError)
   EXPECT_DAQ_ERROR(DAQmxErrorSpecifiedAttrNotValid, response);
 }
 
+TEST_F(NiDAQmxDriverApiTests, ActiveTask_RegisterForEveryNSamplesEvent_ReturnsError)
+{
+  create_ai_voltage_chan(-10.0, 10.0);
+  client::start_task(stub(), task());
+
+  grpc::ClientContext context;
+  auto reader = client::register_every_n_samples_event(
+      stub(),
+      context,
+      task(),
+      nidaqmx_grpc::EveryNSamplesEventType::EVERY_N_SAMPLES_EVENT_TYPE_ACQUIRED_INTO_BUFFER,
+      100);
+
+  RegisterEveryNSamplesEventResponse response;
+  reader->Read(&response);
+  EXPECT_DAQ_ERROR(DAQmxErrorCannotRegisterDAQmxSoftwareEventWhileTaskIsRunning, response);
+}
+
+TEST_F(NiDAQmxDriverApiTests, ActiveTask_RegisterDoneEvent_ReturnsError)
+{
+  create_ai_voltage_chan(-10.0, 10.0);
+  client::start_task(stub(), task());
+
+  grpc::ClientContext context;
+  auto reader = client::register_done_event(
+      stub(),
+      context,
+      task());
+
+  RegisterDoneEventResponse response;
+  reader->Read(&response);
+  EXPECT_DAQ_ERROR(DAQmxErrorCannotRegisterDAQmxSoftwareEventWhileTaskIsRunning, response);
+}
+
 }  // namespace system
 }  // namespace tests
 }  // namespace ni
