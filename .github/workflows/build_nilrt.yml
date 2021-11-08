@@ -134,6 +134,9 @@ jobs:
           message(FATAL_ERROR "Build failed")
         endif()
 
+    - name: Check for files dirtied by codegen
+      run: git diff --no-ext-diff --quiet --exit-code
+
     - name: Tar Server Build Files
       if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases') }}
       run: >-
