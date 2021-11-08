@@ -101,7 +101,7 @@ jobs:
         endif()
 
     - name: Check for files dirtied by codegen
-      run: git diff --no-ext-diff --quiet --exit-code
+      run: git diff --exit-code
 
     - name: Run Tests
       shell: cmake -P {0}
