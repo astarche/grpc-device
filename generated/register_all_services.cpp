@@ -16,6 +16,7 @@
 #include "nidigitalpattern/nidigitalpattern_service_registrar.h"
 #include "nidmm/nidmm_service_registrar.h"
 #include "nifgen/nifgen_service_registrar.h"
+#include "nifpga/nifpga_service_registrar.h"
 #if defined(_MSC_VER)
 #include "nirfmxbluetooth/nirfmxbluetooth_service_registrar.h"
 #endif // defined(_MSC_VER)
@@ -59,6 +60,7 @@ std::shared_ptr<void> register_all_services(
 
   auto task_handle_repository = std::make_shared<nidevice_grpc::SessionResourceRepository<TaskHandle>>(session_repository.get());
   auto vi_session_repository = std::make_shared<nidevice_grpc::SessionResourceRepository<ViSession>>(session_repository.get());
+  auto ni_fpga_session_repository = std::make_shared<nidevice_grpc::SessionResourceRepository<NiFpga_Session>>(session_repository.get());
 #if defined(_MSC_VER)
   auto ni_r_fmx_instr_handle_repository = std::make_shared<nidevice_grpc::SessionResourceRepository<niRFmxInstrHandle>>(session_repository.get());
 #endif // defined(_MSC_VER)
@@ -88,6 +90,11 @@ std::shared_ptr<void> register_all_services(
     nifgen_grpc::register_service(
       server_builder, 
       vi_session_repository,
+      feature_toggles));
+  service_vector->push_back(
+    nifpga_grpc::register_service(
+      server_builder, 
+      ni_fpga_session_repository,
       feature_toggles));
 #if defined(_MSC_VER)
   service_vector->push_back(

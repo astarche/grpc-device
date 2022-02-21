@@ -34,6 +34,9 @@ class ${service_class_prefix}LibraryInterface {
   parameters = f['parameters']
   return_type = f['returns']
 %>\
+  % if 'nifpga' in config["namespace_component"]:
+    /* ${parameters} */
+  % endif
   virtual ${return_type} ${method_name}(${service_helpers.create_params(parameters, expand_varargs=True)}) = 0;
 % endfor
 };
