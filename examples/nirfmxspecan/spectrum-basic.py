@@ -34,8 +34,7 @@ import sys
 import nirfmxspecan_pb2 as nirfmxspecan_types
 import nirfmxspecan_pb2_grpc as grpc_nirfmxspecan
 
-server_address = "localhost"
-server_port = "31763"
+server_address = "localhost:31763"
 session_name = "NI-RFSASession"
 
 # Resource name and options for a simulated 5663 client.
@@ -46,13 +45,11 @@ options = "Simulate=1,DriverSetup=Model:5663"
 if len(sys.argv) >= 2:
     server_address = sys.argv[1]
 if len(sys.argv) >= 3:
-    server_port = sys.argv[2]
-if len(sys.argv) >= 4:
-    resource = sys.argv[3]
+    resource = sys.argv[2]
     options = ""
 
 # Create a gRPC channel + client.
-channel = grpc.insecure_channel(f"{server_address}:{server_port}")
+channel = grpc.insecure_channel(server_address)
 client = grpc_nirfmxspecan.NiRFmxSpecAnStub(channel)
 instr = None
 

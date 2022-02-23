@@ -16,6 +16,7 @@ namespace nidevice_grpc {
 
 static const char* kDefaultFilename = "server_config.json";
 static const char* kPortJsonKey = "port";
+static const char* kAddressJsonKey = "address";
 static const char* kServerCertJsonKey = "server_cert";
 static const char* kServerKeyJsonKey = "server_key";
 static const char* kRootCertJsonKey = "root_cert";
@@ -95,6 +96,11 @@ nlohmann::json ServerConfigurationParser::load(const std::string& config_file_pa
 std::string ServerConfigurationParser::parse_address() const
 {
   int parsed_port = -1;
+
+  auto address_it = config_file_.find(kAddressJsonKey);
+  if (address_it != config_file_.end()) {
+    return address_it->get<std::string>();
+  }
 
   auto it = config_file_.find(kPortJsonKey);
   if (it != config_file_.end()) {
