@@ -15,9 +15,7 @@ class NiFpgaLibraryInterface {
  public:
   virtual ~NiFpgaLibraryInterface() {}
 
-    /* [{'direction': 'in', 'name': 'bitfile', 'type': 'const char*', 'grpc_type': 'string', 'pointer': True, 'cppName': 'bitfile'}, {'direction': 'in', 'name': 'signature', 'type': 'const char*', 'grpc_type': 'string', 'pointer': True, 'cppName': 'signature'}, {'direction': 'in', 'name': 'resource', 'type': 'const char*', 'grpc_type': 'string', 'pointer': True, 'cppName': 'resource'}, {'direction': 'in', 'name': 'attribute', 'type': 'uint32_t', 'grpc_type': 'uint32', 'cppName': 'attribute'}, {'direction': 'out', 'name': 'session', 'type': 'NiFpga_Session', 'grpc_type': 'nidevice_grpc.Session', 'cppName': 'session'}] */
   virtual int32_t Open(const char* bitfile, const char* signature, const char* resource, uint32_t attribute, NiFpga_Session* session) = 0;
-    /* [{'direction': 'in', 'name': 'session', 'type': 'NiFpga_Session', 'grpc_type': 'nidevice_grpc.Session', 'cppName': 'session'}, {'direction': 'in', 'name': 'attribute', 'type': 'uint32_t', 'grpc_type': 'uint32', 'cppName': 'attribute'}] */
   virtual int32_t Close(NiFpga_Session session, uint32_t attribute) = 0;
 };
 

@@ -13,34 +13,29 @@ functions = {
                 'direction': 'in',
                 'name': 'bitfile',
                 'type': 'const char*',
-                'grpc_type': 'string',
                 'pointer': True,
             },
             {
                 'direction': 'in',
                 'name': 'signature',
                 'type': 'const char*',
-                'grpc_type': 'string',
                 'pointer': True,
             },
             {
                 'direction': 'in',
                 'name': 'resource',
                 'type': 'const char*',
-                'grpc_type': 'string',
                 'pointer': True,
             },
             {
                 'direction': 'in',
                 'name': 'attribute',
                 'type': 'uint32_t',
-                'grpc_type': 'uint32'
             },
             {
                 'direction': 'out',
                 'name': 'session',
                 'type': 'NiFpga_Session',
-                'grpc_type': 'nidevice_grpc.Session'
             }
         ],
         'returns': 'int32_t',
@@ -51,13 +46,11 @@ functions = {
                 'direction': 'in',
                 'name': 'session',
                 'type': 'NiFpga_Session',
-                'grpc_type': 'nidevice_grpc.Session'
             },
             {
                 'direction': 'in',
                 'name': 'attribute',
                 'type': 'uint32_t',
-                'grpc_type': 'uint32'
             }
         ],
         'returns': 'int32_t',
