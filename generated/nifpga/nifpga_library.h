@@ -18,14 +18,20 @@ class NiFpgaLibrary : public nifpga_grpc::NiFpgaLibraryInterface {
   virtual ~NiFpgaLibrary();
 
   ::grpc::Status check_function_exists(std::string functionName);
-  int32_t Open(const char* bitfile, const char* signature, const char* resource, uint32_t attribute, NiFpga_Session* session);
-  int32_t Close(NiFpga_Session session, uint32_t attribute);
+  NiFpga_Status Initialize();
+  NiFpga_Status Finalize();
+  NiFpga_Status Open(const char* bitfile, const char* signature, const char* resource, uint32_t attribute, NiFpga_Session* session);
+  NiFpga_Status Close(NiFpga_Session session, uint32_t attribute);
 
  private:
+  using InitializePtr = decltype(&NiFpga_Initialize);
+  using FinalizePtr = decltype(&NiFpga_Finalize);
   using OpenPtr = decltype(&NiFpga_Open);
   using ClosePtr = decltype(&NiFpga_Close);
 
   typedef struct FunctionPointers {
+    InitializePtr Initialize;
+    FinalizePtr Finalize;
     OpenPtr Open;
     ClosePtr Close;
   } FunctionLoadStatus;

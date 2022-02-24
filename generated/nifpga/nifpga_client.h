@@ -22,7 +22,9 @@ using StubPtr = std::unique_ptr<NiFpga::Stub>;
 using namespace nidevice_grpc::experimental::client;
 
 
-OpenResponse open(const StubPtr& stub, const pb::string& bitfile, const pb::string& signature, const pb::string& resource, const pb::uint32& attribute);
+InitializeResponse initialize(const StubPtr& stub);
+FinalizeResponse finalize(const StubPtr& stub);
+OpenResponse open(const StubPtr& stub, const pb::string& bitfile, const pb::string& signature, const pb::string& resource, const simple_variant<OpenAttribute, std::int32_t>& attribute);
 CloseResponse close(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& attribute);
 
 } // namespace nifpga_grpc::experimental::client

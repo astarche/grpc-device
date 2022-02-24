@@ -16,6 +16,8 @@ package nifpga_grpc;
 import "session.proto";
 
 service NiFpga {
+  rpc Initialize(InitializeRequest) returns (InitializeResponse);
+  rpc Finalize(FinalizeRequest) returns (FinalizeResponse);
   rpc Open(OpenRequest) returns (OpenResponse);
   rpc Close(CloseRequest) returns (CloseResponse);
 }
@@ -24,12 +26,37 @@ enum NiFpgaAttribute {
   NIFPGA_ATTRIBUTE_UNSPECIFIED = 0;
 }
 
+enum OpenAttribute {
+  OPEN_ATTRIBUTE_UNSPECIFIED = 0;
+  OPEN_ATTRIBUTE_NoRun = 1;
+  OPEN_ATTRIBUTE_BitfilePathIsUTF8 = 2;
+  OPEN_ATTRIBUTE_BitfileContentsNotPath = 3;
+  OPEN_ATTRIBUTE_IgnoreSignatureArgument = 4;
+}
+
+message InitializeRequest {
+}
+
+message InitializeResponse {
+  int32 status = 1;
+}
+
+message FinalizeRequest {
+}
+
+message FinalizeResponse {
+  int32 status = 1;
+}
+
 message OpenRequest {
   string session_name = 1;
   string bitfile = 2;
   string signature = 3;
   string resource = 4;
-  uint32 attribute = 5;
+  oneof attribute_enum {
+    OpenAttribute attribute_mapped = 5;
+    uint32 attribute_raw = 6;
+  }
 }
 
 message OpenResponse {

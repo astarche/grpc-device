@@ -17,8 +17,10 @@ namespace unit {
 
 class NiFpgaMockLibrary : public nifpga_grpc::NiFpgaLibraryInterface {
  public:
-  MOCK_METHOD(int32_t, Open, (const char* bitfile, const char* signature, const char* resource, uint32_t attribute, NiFpga_Session* session), (override));
-  MOCK_METHOD(int32_t, Close, (NiFpga_Session session, uint32_t attribute), (override));
+  MOCK_METHOD(NiFpga_Status, Initialize, (), (override));
+  MOCK_METHOD(NiFpga_Status, Finalize, (), (override));
+  MOCK_METHOD(NiFpga_Status, Open, (const char* bitfile, const char* signature, const char* resource, uint32_t attribute, NiFpga_Session* session), (override));
+  MOCK_METHOD(NiFpga_Status, Close, (NiFpga_Session session, uint32_t attribute), (override));
 };
 
 }  // namespace unit

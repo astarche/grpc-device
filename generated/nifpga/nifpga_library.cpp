@@ -21,6 +21,8 @@ NiFpgaLibrary::NiFpgaLibrary() : shared_library_(kLibraryName)
   if (!loaded) {
     return;
   }
+  function_pointers_.Initialize = reinterpret_cast<InitializePtr>(shared_library_.get_function_pointer("NiFpga_Initialize"));
+  function_pointers_.Finalize = reinterpret_cast<FinalizePtr>(shared_library_.get_function_pointer("NiFpga_Finalize"));
   function_pointers_.Open = reinterpret_cast<OpenPtr>(shared_library_.get_function_pointer("NiFpga_Open"));
   function_pointers_.Close = reinterpret_cast<ClosePtr>(shared_library_.get_function_pointer("NiFpga_Close"));
 }
@@ -36,7 +38,31 @@ NiFpgaLibrary::~NiFpgaLibrary()
     : ::grpc::Status(::grpc::NOT_FOUND, "Could not find the function " + functionName);
 }
 
-int32_t NiFpgaLibrary::Open(const char* bitfile, const char* signature, const char* resource, uint32_t attribute, NiFpga_Session* session)
+NiFpga_Status NiFpgaLibrary::Initialize()
+{
+  if (!function_pointers_.Initialize) {
+    throw nidevice_grpc::LibraryLoadException("Could not find NiFpga_Initialize.");
+  }
+#if defined(_MSC_VER)
+  return NiFpga_Initialize();
+#else
+  return function_pointers_.Initialize();
+#endif
+}
+
+NiFpga_Status NiFpgaLibrary::Finalize()
+{
+  if (!function_pointers_.Finalize) {
+    throw nidevice_grpc::LibraryLoadException("Could not find NiFpga_Finalize.");
+  }
+#if defined(_MSC_VER)
+  return NiFpga_Finalize();
+#else
+  return function_pointers_.Finalize();
+#endif
+}
+
+NiFpga_Status NiFpgaLibrary::Open(const char* bitfile, const char* signature, const char* resource, uint32_t attribute, NiFpga_Session* session)
 {
   if (!function_pointers_.Open) {
     throw nidevice_grpc::LibraryLoadException("Could not find NiFpga_Open.");
@@ -48,7 +74,7 @@ int32_t NiFpgaLibrary::Open(const char* bitfile, const char* signature, const ch
 #endif
 }
 
-int32_t NiFpgaLibrary::Close(NiFpga_Session session, uint32_t attribute)
+NiFpga_Status NiFpgaLibrary::Close(NiFpga_Session session, uint32_t attribute)
 {
   if (!function_pointers_.Close) {
     throw nidevice_grpc::LibraryLoadException("Could not find NiFpga_Close.");

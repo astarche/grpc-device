@@ -42,16 +42,69 @@ namespace nifpga_grpc {
 
   //---------------------------------------------------------------------
   //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::Initialize(::grpc::ServerContext* context, const InitializeRequest* request, InitializeResponse* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto status = library_->Initialize();
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::Finalize(::grpc::ServerContext* context, const FinalizeRequest* request, FinalizeResponse* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto status = library_->Finalize();
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
   ::grpc::Status NiFpgaService::Open(::grpc::ServerContext* context, const OpenRequest* request, OpenResponse* response)
   {
     if (context->IsCancelled()) {
       return ::grpc::Status::CANCELLED;
     }
     try {
-      const char* bitfile = (const char*)request->bitfile().c_str();
-      const char* signature = (const char*)request->signature().c_str();
-      const char* resource = (const char*)request->resource().c_str();
-      uint32_t attribute = request->attribute();
+      auto bitfile = request->bitfile().c_str();
+      auto signature = request->signature().c_str();
+      auto resource = request->resource().c_str();
+      uint32_t attribute;
+      switch (request->attribute_enum_case()) {
+        case nifpga_grpc::OpenRequest::AttributeEnumCase::kAttributeMapped: {
+          auto attribute_imap_it = openattribute_input_map_.find(request->attribute_mapped());
+          if (attribute_imap_it == openattribute_input_map_.end()) {
+            return ::grpc::Status(::grpc::INVALID_ARGUMENT, "The value for attribute_mapped was not specified or out of range.");
+          }
+          attribute = static_cast<uint32_t>(attribute_imap_it->second);
+          break;
+        }
+        case nifpga_grpc::OpenRequest::AttributeEnumCase::kAttributeRaw: {
+          attribute = static_cast<uint32_t>(request->attribute_raw());
+          break;
+        }
+        case nifpga_grpc::OpenRequest::AttributeEnumCase::ATTRIBUTE_ENUM_NOT_SET: {
+          return ::grpc::Status(::grpc::INVALID_ARGUMENT, "The value for attribute was not specified or out of range");
+          break;
+        }
+      }
+
 
       auto init_lambda = [&] () {
         NiFpga_Session session;

@@ -563,7 +563,7 @@ ${initialize_standard_input_param(function_name, parameter)}
   c_type_underlying_type = common_helpers.get_underlying_type_name(c_type)
   c_element_type_that_needs_coercion = service_helpers.get_c_element_type_for_array_that_needs_coercion(parameter)
 %>\
-% if c_type in ['ViConstString', 'const char[]', 'const char *']:
+% if c_type in ['ViConstString', 'const char[]', 'const char*']:
       auto ${parameter_name} = ${request_snippet}.c_str();\
 % elif common_helpers.is_string_arg(parameter):
       ${c_type_pointer} ${parameter_name} = (${c_type_pointer})${request_snippet}.c_str();\

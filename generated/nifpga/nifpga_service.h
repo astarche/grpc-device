@@ -41,11 +41,15 @@ public:
     const NiFpgaFeatureToggles& feature_toggles = {});
   virtual ~NiFpgaService();
   
+  ::grpc::Status Initialize(::grpc::ServerContext* context, const InitializeRequest* request, InitializeResponse* response) override;
+  ::grpc::Status Finalize(::grpc::ServerContext* context, const FinalizeRequest* request, FinalizeResponse* response) override;
   ::grpc::Status Open(::grpc::ServerContext* context, const OpenRequest* request, OpenResponse* response) override;
   ::grpc::Status Close(::grpc::ServerContext* context, const CloseRequest* request, CloseResponse* response) override;
 private:
   NiFpgaLibraryInterface* library_;
   ResourceRepositorySharedPtr session_repository_;
+  std::map<std::int32_t, std::int32_t> openattribute_input_map_ { {0, 0},{1, 1},{2, 2},{3, 1073741824},{4, 2147483648}, };
+  std::map<std::int32_t, std::int32_t> openattribute_output_map_ { {0, 0},{1, 1},{2, 2},{1073741824, 3},{2147483648, 4}, };
 
   NiFpgaFeatureToggles feature_toggles_;
 };

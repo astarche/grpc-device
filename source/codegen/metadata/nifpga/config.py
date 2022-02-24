@@ -9,10 +9,12 @@ config = {
     'close_function': 'Close ',
     'custom_types': [],
     'type_to_grpc_type': {
-        'NiFpga_Session': 'nidevice_grpc.Session',
         'const char*': 'string',
         'char*': 'string',
         'uint32_t': 'uint32',
+        'int32_t': 'int32',
+        'NiFpga_Session': 'nidevice_grpc.Session',
+        'NiFpga_Status': 'int32'
     },
     'driver_name': 'NI-FPGA',
     'extra_errors_used': [],

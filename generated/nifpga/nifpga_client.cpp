@@ -17,8 +17,38 @@
 
 namespace nifpga_grpc::experimental::client {
 
+InitializeResponse
+initialize(const StubPtr& stub)
+{
+  ::grpc::ClientContext context;
+
+  auto request = InitializeRequest{};
+
+  auto response = InitializeResponse{};
+
+  raise_if_error(
+      stub->Initialize(&context, request, &response));
+
+  return response;
+}
+
+FinalizeResponse
+finalize(const StubPtr& stub)
+{
+  ::grpc::ClientContext context;
+
+  auto request = FinalizeRequest{};
+
+  auto response = FinalizeResponse{};
+
+  raise_if_error(
+      stub->Finalize(&context, request, &response));
+
+  return response;
+}
+
 OpenResponse
-open(const StubPtr& stub, const pb::string& bitfile, const pb::string& signature, const pb::string& resource, const pb::uint32& attribute)
+open(const StubPtr& stub, const pb::string& bitfile, const pb::string& signature, const pb::string& resource, const simple_variant<OpenAttribute, std::int32_t>& attribute)
 {
   ::grpc::ClientContext context;
 
@@ -26,7 +56,14 @@ open(const StubPtr& stub, const pb::string& bitfile, const pb::string& signature
   request.set_bitfile(bitfile);
   request.set_signature(signature);
   request.set_resource(resource);
-  request.set_attribute(attribute);
+  const auto attribute_ptr = attribute.get_if<OpenAttribute>();
+  const auto attribute_raw_ptr = attribute.get_if<std::int32_t>();
+  if (attribute_ptr) {
+    request.set_attribute_mapped(*attribute_ptr);
+  }
+  else if (attribute_raw_ptr) {
+    request.set_attribute_raw(*attribute_raw_ptr);
+  }
 
   auto response = OpenResponse{};
 

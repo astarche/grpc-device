@@ -15,8 +15,10 @@ class NiFpgaLibraryInterface {
  public:
   virtual ~NiFpgaLibraryInterface() {}
 
-  virtual int32_t Open(const char* bitfile, const char* signature, const char* resource, uint32_t attribute, NiFpga_Session* session) = 0;
-  virtual int32_t Close(NiFpga_Session session, uint32_t attribute) = 0;
+  virtual NiFpga_Status Initialize() = 0;
+  virtual NiFpga_Status Finalize() = 0;
+  virtual NiFpga_Status Open(const char* bitfile, const char* signature, const char* resource, uint32_t attribute, NiFpga_Session* session) = 0;
+  virtual NiFpga_Status Close(NiFpga_Session session, uint32_t attribute) = 0;
 };
 
 }  // namespace nifpga_grpc

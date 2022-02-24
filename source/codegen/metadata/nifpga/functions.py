@@ -4,6 +4,14 @@ functions = {
     #                           const char*     resource,
     #                           uint32_t        attribute,
     #                           NiFpga_Session* session);
+    'Initialize': {
+        'parameters': [],
+        'returns': 'NiFpga_Status',
+    },
+    'Finalize': {
+        'parameters': [],
+        'returns': 'NiFpga_Status',
+    },
     'Open': {
         'init_method': True,
         'custom_close_method': True,
@@ -30,6 +38,7 @@ functions = {
             {
                 'direction': 'in',
                 'name': 'attribute',
+                'enum': 'OpenAttribute',
                 'type': 'uint32_t',
             },
             {
@@ -38,7 +47,7 @@ functions = {
                 'type': 'NiFpga_Session',
             }
         ],
-        'returns': 'int32_t',
+        'returns': 'NiFpga_Status',
     },
     'Close': {
         'parameters': [
@@ -53,7 +62,7 @@ functions = {
                 'type': 'uint32_t',
             }
         ],
-        'returns': 'int32_t',
+        'returns': 'NiFpga_Status',
     }
 }
 
