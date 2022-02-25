@@ -25,7 +25,28 @@ using namespace nidevice_grpc::experimental::client;
 InitializeResponse initialize(const StubPtr& stub);
 FinalizeResponse finalize(const StubPtr& stub);
 OpenResponse open(const StubPtr& stub, const pb::string& bitfile, const pb::string& signature, const pb::string& resource, const simple_variant<OpenAttribute, std::int32_t>& attribute);
-CloseResponse close(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& attribute);
+CloseResponse close(const StubPtr& stub, const nidevice_grpc::Session& session, const simple_variant<CloseAttribute, pb::uint32>& attribute);
+RunResponse run(const StubPtr& stub, const nidevice_grpc::Session& session, const simple_variant<RunAttribute, pb::uint32>& attribute);
+ResetResponse reset(const StubPtr& stub, const nidevice_grpc::Session& session);
+DownloadResponse download(const StubPtr& stub, const nidevice_grpc::Session& session);
+ReadBoolResponse read_bool(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator);
+ReadI8Response read_i8(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator);
+ReadU8Response read_u8(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator);
+ReadI16Response read_i16(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator);
+ReadU16Response read_u16(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator);
+ReadI32Response read_i32(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator);
+ReadU32Response read_u32(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator);
+ReadI64Response read_i64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator);
+ReadU64Response read_u64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator);
+WriteBoolResponse write_bool(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& control, const bool& value);
+WriteI8Response write_i8(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& control, const pb::int32& value);
+WriteU8Response write_u8(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& control, const pb::uint32& value);
+WriteI16Response write_i16(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& control, const pb::int32& value);
+WriteU16Response write_u16(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& control, const pb::uint32& value);
+WriteI32Response write_i32(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& control, const pb::int32& value);
+WriteU32Response write_u32(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& control, const pb::uint32& value);
+WriteI64Response write_i64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& control, const pb::int64& value);
+WriteU64Response write_u64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& control, const pb::uint64& value);
 
 } // namespace nifpga_grpc::experimental::client
 

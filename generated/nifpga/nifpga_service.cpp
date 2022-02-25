@@ -136,8 +136,501 @@ namespace nifpga_grpc {
     try {
       auto session_grpc_session = request->session();
       NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
-      uint32_t attribute = request->attribute();
+      uint32_t attribute;
+      switch (request->attribute_enum_case()) {
+        case nifpga_grpc::CloseRequest::AttributeEnumCase::kAttribute: {
+          attribute = static_cast<uint32_t>(request->attribute());
+          break;
+        }
+        case nifpga_grpc::CloseRequest::AttributeEnumCase::kAttributeRaw: {
+          attribute = static_cast<uint32_t>(request->attribute_raw());
+          break;
+        }
+        case nifpga_grpc::CloseRequest::AttributeEnumCase::ATTRIBUTE_ENUM_NOT_SET: {
+          return ::grpc::Status(::grpc::INVALID_ARGUMENT, "The value for attribute was not specified or out of range");
+          break;
+        }
+      }
+
       auto status = library_->Close(session, attribute);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::Run(::grpc::ServerContext* context, const RunRequest* request, RunResponse* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t attribute;
+      switch (request->attribute_enum_case()) {
+        case nifpga_grpc::RunRequest::AttributeEnumCase::kAttribute: {
+          attribute = static_cast<uint32_t>(request->attribute());
+          break;
+        }
+        case nifpga_grpc::RunRequest::AttributeEnumCase::kAttributeRaw: {
+          attribute = static_cast<uint32_t>(request->attribute_raw());
+          break;
+        }
+        case nifpga_grpc::RunRequest::AttributeEnumCase::ATTRIBUTE_ENUM_NOT_SET: {
+          return ::grpc::Status(::grpc::INVALID_ARGUMENT, "The value for attribute was not specified or out of range");
+          break;
+        }
+      }
+
+      auto status = library_->Run(session, attribute);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::Reset(::grpc::ServerContext* context, const ResetRequest* request, ResetResponse* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      auto status = library_->Reset(session);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::Download(::grpc::ServerContext* context, const DownloadRequest* request, DownloadResponse* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      auto status = library_->Download(session);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::ReadBool(::grpc::ServerContext* context, const ReadBoolRequest* request, ReadBoolResponse* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      NiFpga_Bool value {};
+      auto status = library_->ReadBool(session, indicator, &value);
+      response->set_status(status);
+      if (status_ok(status)) {
+        response->set_value(value);
+      }
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::ReadI8(::grpc::ServerContext* context, const ReadI8Request* request, ReadI8Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      int8_t value {};
+      auto status = library_->ReadI8(session, indicator, &value);
+      response->set_status(status);
+      if (status_ok(status)) {
+        response->set_value(value);
+      }
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::ReadU8(::grpc::ServerContext* context, const ReadU8Request* request, ReadU8Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      uint8_t value {};
+      auto status = library_->ReadU8(session, indicator, &value);
+      response->set_status(status);
+      if (status_ok(status)) {
+        response->set_value(value);
+      }
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::ReadI16(::grpc::ServerContext* context, const ReadI16Request* request, ReadI16Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      int16_t value {};
+      auto status = library_->ReadI16(session, indicator, &value);
+      response->set_status(status);
+      if (status_ok(status)) {
+        response->set_value(value);
+      }
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::ReadU16(::grpc::ServerContext* context, const ReadU16Request* request, ReadU16Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      uint16_t value {};
+      auto status = library_->ReadU16(session, indicator, &value);
+      response->set_status(status);
+      if (status_ok(status)) {
+        response->set_value(value);
+      }
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::ReadI32(::grpc::ServerContext* context, const ReadI32Request* request, ReadI32Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      int32_t value {};
+      auto status = library_->ReadI32(session, indicator, &value);
+      response->set_status(status);
+      if (status_ok(status)) {
+        response->set_value(value);
+      }
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::ReadU32(::grpc::ServerContext* context, const ReadU32Request* request, ReadU32Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      uint32_t value {};
+      auto status = library_->ReadU32(session, indicator, &value);
+      response->set_status(status);
+      if (status_ok(status)) {
+        response->set_value(value);
+      }
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::ReadI64(::grpc::ServerContext* context, const ReadI64Request* request, ReadI64Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      int64_t value {};
+      auto status = library_->ReadI64(session, indicator, &value);
+      response->set_status(status);
+      if (status_ok(status)) {
+        response->set_value(value);
+      }
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::ReadU64(::grpc::ServerContext* context, const ReadU64Request* request, ReadU64Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      uint64_t value {};
+      auto status = library_->ReadU64(session, indicator, &value);
+      response->set_status(status);
+      if (status_ok(status)) {
+        response->set_value(value);
+      }
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteBool(::grpc::ServerContext* context, const WriteBoolRequest* request, WriteBoolResponse* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t control = request->control();
+      NiFpga_Bool value = request->value();
+      auto status = library_->WriteBool(session, control, value);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteI8(::grpc::ServerContext* context, const WriteI8Request* request, WriteI8Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t control = request->control();
+      int8_t value = request->value();
+      auto status = library_->WriteI8(session, control, value);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteU8(::grpc::ServerContext* context, const WriteU8Request* request, WriteU8Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t control = request->control();
+      uint8_t value = request->value();
+      auto status = library_->WriteU8(session, control, value);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteI16(::grpc::ServerContext* context, const WriteI16Request* request, WriteI16Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t control = request->control();
+      int16_t value = request->value();
+      auto status = library_->WriteI16(session, control, value);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteU16(::grpc::ServerContext* context, const WriteU16Request* request, WriteU16Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t control = request->control();
+      uint16_t value = request->value();
+      auto status = library_->WriteU16(session, control, value);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteI32(::grpc::ServerContext* context, const WriteI32Request* request, WriteI32Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t control = request->control();
+      int32_t value = request->value();
+      auto status = library_->WriteI32(session, control, value);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteU32(::grpc::ServerContext* context, const WriteU32Request* request, WriteU32Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t control = request->control();
+      uint32_t value = request->value();
+      auto status = library_->WriteU32(session, control, value);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteI64(::grpc::ServerContext* context, const WriteI64Request* request, WriteI64Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t control = request->control();
+      int64_t value = request->value();
+      auto status = library_->WriteI64(session, control, value);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteU64(::grpc::ServerContext* context, const WriteU64Request* request, WriteU64Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t control = request->control();
+      uint64_t value = request->value();
+      auto status = library_->WriteU64(session, control, value);
       response->set_status(status);
       return ::grpc::Status::OK;
     }

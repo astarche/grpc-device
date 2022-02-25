@@ -11,10 +11,18 @@ config = {
     'type_to_grpc_type': {
         'const char*': 'string',
         'char*': 'string',
-        'uint32_t': 'uint32',
+        'int8_t': 'int32',
+        'int16_t': 'int32',
         'int32_t': 'int32',
+        'int64_t': 'int64',       
+        'uint8_t':'uint32',
+        'uint16_t': 'uint32',
+        'uint32_t': 'uint32',
+        'uint64_t': 'uint64',       
+        'size_t': 'uint32',
         'NiFpga_Session': 'nidevice_grpc.Session',
-        'NiFpga_Status': 'int32'
+        'NiFpga_Status': 'int32',
+        'NiFpga_Bool': 'bool' # defined as int8_t in NiFpga.h
     },
     'driver_name': 'NI-FPGA',
     'extra_errors_used': [],

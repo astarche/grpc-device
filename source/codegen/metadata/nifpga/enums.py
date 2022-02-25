@@ -20,4 +20,20 @@ enums = {
             },
         ]
     },
+    'CloseAttribute': {
+        'values': [
+            {
+                'name': 'NoResetIfLastSession',
+                'value': 1
+            }
+        ]
+    },
+    'RunAttribute': {
+        'values': [
+            {
+                'name': 'WaitUntilDone',
+                'value': 1
+            }
+        ]
+    }
 }
