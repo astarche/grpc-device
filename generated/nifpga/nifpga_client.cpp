@@ -468,5 +468,77 @@ write_u64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::
   return response;
 }
 
+ReadArrayI16Response
+read_array_i16(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const pb::uint32& size)
+{
+  ::grpc::ClientContext context;
+
+  auto request = ReadArrayI16Request{};
+  request.mutable_session()->CopyFrom(session);
+  request.set_indicator(indicator);
+  request.set_size(size);
+
+  auto response = ReadArrayI16Response{};
+
+  raise_if_error(
+      stub->ReadArrayI16(&context, request, &response));
+
+  return response;
+}
+
+ReadArrayU16Response
+read_array_u16(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const pb::uint32& size)
+{
+  ::grpc::ClientContext context;
+
+  auto request = ReadArrayU16Request{};
+  request.mutable_session()->CopyFrom(session);
+  request.set_indicator(indicator);
+  request.set_size(size);
+
+  auto response = ReadArrayU16Response{};
+
+  raise_if_error(
+      stub->ReadArrayU16(&context, request, &response));
+
+  return response;
+}
+
+ReadArrayI64Response
+read_array_i64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const pb::uint32& size)
+{
+  ::grpc::ClientContext context;
+
+  auto request = ReadArrayI64Request{};
+  request.mutable_session()->CopyFrom(session);
+  request.set_indicator(indicator);
+  request.set_size(size);
+
+  auto response = ReadArrayI64Response{};
+
+  raise_if_error(
+      stub->ReadArrayI64(&context, request, &response));
+
+  return response;
+}
+
+ReadArrayU64Response
+read_array_u64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const pb::uint32& size)
+{
+  ::grpc::ClientContext context;
+
+  auto request = ReadArrayU64Request{};
+  request.mutable_session()->CopyFrom(session);
+  request.set_indicator(indicator);
+  request.set_size(size);
+
+  auto response = ReadArrayU64Response{};
+
+  raise_if_error(
+      stub->ReadArrayU64(&context, request, &response));
+
+  return response;
+}
+
 
 } // namespace nifpga_grpc::experimental::client

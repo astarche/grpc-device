@@ -41,6 +41,10 @@ service NiFpga {
   rpc WriteU32(WriteU32Request) returns (WriteU32Response);
   rpc WriteI64(WriteI64Request) returns (WriteI64Response);
   rpc WriteU64(WriteU64Request) returns (WriteU64Response);
+  rpc ReadArrayI16(ReadArrayI16Request) returns (ReadArrayI16Response);
+  rpc ReadArrayU16(ReadArrayU16Request) returns (ReadArrayU16Response);
+  rpc ReadArrayI64(ReadArrayI64Request) returns (ReadArrayI64Response);
+  rpc ReadArrayU64(ReadArrayU64Request) returns (ReadArrayU64Response);
 }
 
 enum NiFpgaAttribute {
@@ -313,5 +317,49 @@ message WriteU64Request {
 
 message WriteU64Response {
   int32 status = 1;
+}
+
+message ReadArrayI16Request {
+  nidevice_grpc.Session session = 1;
+  uint32 indicator = 2;
+  uint32 size = 3;
+}
+
+message ReadArrayI16Response {
+  int32 status = 1;
+  repeated int32 array = 2;
+}
+
+message ReadArrayU16Request {
+  nidevice_grpc.Session session = 1;
+  uint32 indicator = 2;
+  uint32 size = 3;
+}
+
+message ReadArrayU16Response {
+  int32 status = 1;
+  repeated uint32 array = 2;
+}
+
+message ReadArrayI64Request {
+  nidevice_grpc.Session session = 1;
+  uint32 indicator = 2;
+  uint32 size = 3;
+}
+
+message ReadArrayI64Response {
+  int32 status = 1;
+  repeated int64 array = 2;
+}
+
+message ReadArrayU64Request {
+  nidevice_grpc.Session session = 1;
+  uint32 indicator = 2;
+  uint32 size = 3;
+}
+
+message ReadArrayU64Response {
+  int32 status = 1;
+  repeated uint64 array = 2;
 }
 

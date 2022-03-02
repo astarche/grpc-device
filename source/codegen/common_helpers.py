@@ -36,8 +36,9 @@ def is_repeating_parameter(parameter: dict):
     return parameter.get("repeating_argument", False)
 
 
-def is_array(data_type: str):
-    return data_type.endswith("[]") or data_type.endswith("*")
+def is_array(dataType: str):
+    #return dataType.endswith("[]") or dataType.endswith("*")
+    return dataType.endswith("[]")
 
 
 def is_enum(parameter: dict):
