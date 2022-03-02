@@ -504,7 +504,7 @@ functions = {
     #                                  uint8_t*       array,
     #                                  size_t         size);
     'ReadArrayI16': {
-        'codegen_method': 'CustomCode',
+        #'codegen_method': 'CustomCode',
         'parameters': [
             {
                 'direction': 'in',
@@ -517,10 +517,11 @@ functions = {
                 'type': 'uint32_t',
             },
             {
+                'coerced': True,
                 'direction': 'out',
                 'name': 'array',
-                'type': 'int16_t',
-                'grpc_type': 'repeated int32',
+                'type': 'int16_t[]',
+                #'grpc_type': 'repeated int32',
                 'size': {
                     'mechanism': 'passed-in',
                     'value': 'size'
@@ -535,7 +536,7 @@ functions = {
         'returns': 'NiFpga_Status',
     },
     'ReadArrayU16': {
-        'codegen_method': 'CustomCode',
+        #'codegen_method': 'CustomCode',
         'parameters': [
             {
                 'direction': 'in',
@@ -548,10 +549,11 @@ functions = {
                 'type': 'uint32_t',
             },
             {
+                'coerced': True,
                 'direction': 'out',
                 'name': 'array',
-                'type': 'uint16_t',
-                'grpc_type': 'repeated uint32',
+                'type': 'uint16_t[]',
+                #'grpc_type': 'repeated uint32',
                 'size': {
                     'mechanism': 'passed-in',
                     'value': 'size'
@@ -574,7 +576,7 @@ functions = {
     # #                                   uint32_t*      array,
     # #                                   size_t         size);
     'ReadArrayI64': {
-        'codegen_method': 'CustomCode',
+        #'codegen_method': 'CustomCode',
         'parameters': [
             {
                 'direction': 'in',
@@ -587,10 +589,11 @@ functions = {
                 'type': 'uint32_t',
             },
             {
+                'coerced': True,
                 'direction': 'out',
                 'name': 'array',
-                'type': 'int64_t',
-                'grpc_type': 'repeated int64',
+                'type': 'int64_t[]',
+                #'grpc_type': 'repeated int64',
                 'size': {
                     'mechanism': 'passed-in',
                     'value': 'size'
@@ -605,7 +608,7 @@ functions = {
         'returns': 'NiFpga_Status',
     },
     'ReadArrayU64': {
-        'codegen_method': 'CustomCode',
+        #'codegen_method': 'CustomCode',
         'parameters': [
             {
                 'direction': 'in',
@@ -618,10 +621,11 @@ functions = {
                 'type': 'uint32_t',
             },
             {
+                'coerced': True,
                 'direction': 'out',
                 'name': 'array',
-                'type': 'uint64_t',
-                'grpc_type': 'repeated uint64',
+                'type': 'uint64_t[]',
+                #'grpc_type': 'repeated uint64',
                 'size': {
                     'mechanism': 'passed-in',
                     'value': 'size'

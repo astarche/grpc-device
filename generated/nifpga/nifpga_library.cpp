@@ -363,7 +363,7 @@ NiFpga_Status NiFpgaLibrary::WriteU64(NiFpga_Session session, uint32_t control, 
 #endif
 }
 
-NiFpga_Status NiFpgaLibrary::ReadArrayI16(NiFpga_Session session, uint32_t indicator, int16_t* array, size_t size)
+NiFpga_Status NiFpgaLibrary::ReadArrayI16(NiFpga_Session session, uint32_t indicator, int16_t array[], size_t size)
 {
   if (!function_pointers_.ReadArrayI16) {
     throw nidevice_grpc::LibraryLoadException("Could not find NiFpga_ReadArrayI16.");
@@ -375,7 +375,7 @@ NiFpga_Status NiFpgaLibrary::ReadArrayI16(NiFpga_Session session, uint32_t indic
 #endif
 }
 
-NiFpga_Status NiFpgaLibrary::ReadArrayU16(NiFpga_Session session, uint32_t indicator, uint16_t* array, size_t size)
+NiFpga_Status NiFpgaLibrary::ReadArrayU16(NiFpga_Session session, uint32_t indicator, uint16_t array[], size_t size)
 {
   if (!function_pointers_.ReadArrayU16) {
     throw nidevice_grpc::LibraryLoadException("Could not find NiFpga_ReadArrayU16.");
@@ -387,7 +387,7 @@ NiFpga_Status NiFpgaLibrary::ReadArrayU16(NiFpga_Session session, uint32_t indic
 #endif
 }
 
-NiFpga_Status NiFpgaLibrary::ReadArrayI64(NiFpga_Session session, uint32_t indicator, int64_t* array, size_t size)
+NiFpga_Status NiFpgaLibrary::ReadArrayI64(NiFpga_Session session, uint32_t indicator, int64_t array[], size_t size)
 {
   if (!function_pointers_.ReadArrayI64) {
     throw nidevice_grpc::LibraryLoadException("Could not find NiFpga_ReadArrayI64.");
@@ -399,7 +399,7 @@ NiFpga_Status NiFpgaLibrary::ReadArrayI64(NiFpga_Session session, uint32_t indic
 #endif
 }
 
-NiFpga_Status NiFpgaLibrary::ReadArrayU64(NiFpga_Session session, uint32_t indicator, uint64_t* array, size_t size)
+NiFpga_Status NiFpgaLibrary::ReadArrayU64(NiFpga_Session session, uint32_t indicator, uint64_t array[], size_t size)
 {
   if (!function_pointers_.ReadArrayU64) {
     throw nidevice_grpc::LibraryLoadException("Could not find NiFpga_ReadArrayU64.");

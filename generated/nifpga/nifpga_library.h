@@ -43,10 +43,10 @@ class NiFpgaLibrary : public nifpga_grpc::NiFpgaLibraryInterface {
   NiFpga_Status WriteU32(NiFpga_Session session, uint32_t control, uint32_t value);
   NiFpga_Status WriteI64(NiFpga_Session session, uint32_t control, int64_t value);
   NiFpga_Status WriteU64(NiFpga_Session session, uint32_t control, uint64_t value);
-  NiFpga_Status ReadArrayI16(NiFpga_Session session, uint32_t indicator, int16_t* array, size_t size);
-  NiFpga_Status ReadArrayU16(NiFpga_Session session, uint32_t indicator, uint16_t* array, size_t size);
-  NiFpga_Status ReadArrayI64(NiFpga_Session session, uint32_t indicator, int64_t* array, size_t size);
-  NiFpga_Status ReadArrayU64(NiFpga_Session session, uint32_t indicator, uint64_t* array, size_t size);
+  NiFpga_Status ReadArrayI16(NiFpga_Session session, uint32_t indicator, int16_t array[], size_t size);
+  NiFpga_Status ReadArrayU16(NiFpga_Session session, uint32_t indicator, uint16_t array[], size_t size);
+  NiFpga_Status ReadArrayI64(NiFpga_Session session, uint32_t indicator, int64_t array[], size_t size);
+  NiFpga_Status ReadArrayU64(NiFpga_Session session, uint32_t indicator, uint64_t array[], size_t size);
 
  private:
   using InitializePtr = decltype(&NiFpga_Initialize);
