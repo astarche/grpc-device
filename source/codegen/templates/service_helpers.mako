@@ -855,7 +855,7 @@ ${copy_to_response_with_transform(source_buffer=parameter_name, parameter_name=p
           ${source_buffer}.begin(),
           ${source_buffer}.begin() + ${size},
           google::protobuf::RepeatedFieldBackInserter(response->mutable_${parameter_name}()),
-          [&](auto x) { 
+          [&](auto x) {
               return ${transform_x};
           });
 </%def>

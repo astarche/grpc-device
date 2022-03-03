@@ -70,6 +70,10 @@ public:
   ::grpc::Status ReadArrayU16(::grpc::ServerContext* context, const ReadArrayU16Request* request, ReadArrayU16Response* response) override;
   ::grpc::Status ReadArrayI64(::grpc::ServerContext* context, const ReadArrayI64Request* request, ReadArrayI64Response* response) override;
   ::grpc::Status ReadArrayU64(::grpc::ServerContext* context, const ReadArrayU64Request* request, ReadArrayU64Response* response) override;
+  ::grpc::Status WriteArrayI16(::grpc::ServerContext* context, const WriteArrayI16Request* request, WriteArrayI16Response* response) override;
+  ::grpc::Status WriteArrayU16(::grpc::ServerContext* context, const WriteArrayU16Request* request, WriteArrayU16Response* response) override;
+  ::grpc::Status WriteArrayI64(::grpc::ServerContext* context, const WriteArrayI64Request* request, WriteArrayI64Response* response) override;
+  ::grpc::Status WriteArrayU64(::grpc::ServerContext* context, const WriteArrayU64Request* request, WriteArrayU64Response* response) override;
 private:
   NiFpgaLibraryInterface* library_;
   ResourceRepositorySharedPtr session_repository_;

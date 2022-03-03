@@ -47,6 +47,10 @@ class NiFpgaLibrary : public nifpga_grpc::NiFpgaLibraryInterface {
   NiFpga_Status ReadArrayU16(NiFpga_Session session, uint32_t indicator, uint16_t array[], size_t size);
   NiFpga_Status ReadArrayI64(NiFpga_Session session, uint32_t indicator, int64_t array[], size_t size);
   NiFpga_Status ReadArrayU64(NiFpga_Session session, uint32_t indicator, uint64_t array[], size_t size);
+  NiFpga_Status WriteArrayI16(NiFpga_Session session, uint32_t indicator, const int16_t array[], size_t size);
+  NiFpga_Status WriteArrayU16(NiFpga_Session session, uint32_t indicator, const uint16_t array[], size_t size);
+  NiFpga_Status WriteArrayI64(NiFpga_Session session, uint32_t indicator, const int64_t array[], size_t size);
+  NiFpga_Status WriteArrayU64(NiFpga_Session session, uint32_t indicator, const uint64_t array[], size_t size);
 
  private:
   using InitializePtr = decltype(&NiFpga_Initialize);
@@ -78,6 +82,10 @@ class NiFpgaLibrary : public nifpga_grpc::NiFpgaLibraryInterface {
   using ReadArrayU16Ptr = decltype(&NiFpga_ReadArrayU16);
   using ReadArrayI64Ptr = decltype(&NiFpga_ReadArrayI64);
   using ReadArrayU64Ptr = decltype(&NiFpga_ReadArrayU64);
+  using WriteArrayI16Ptr = decltype(&NiFpga_WriteArrayI16);
+  using WriteArrayU16Ptr = decltype(&NiFpga_WriteArrayU16);
+  using WriteArrayI64Ptr = decltype(&NiFpga_WriteArrayI64);
+  using WriteArrayU64Ptr = decltype(&NiFpga_WriteArrayU64);
 
   typedef struct FunctionPointers {
     InitializePtr Initialize;
@@ -109,6 +117,10 @@ class NiFpgaLibrary : public nifpga_grpc::NiFpgaLibraryInterface {
     ReadArrayU16Ptr ReadArrayU16;
     ReadArrayI64Ptr ReadArrayI64;
     ReadArrayU64Ptr ReadArrayU64;
+    WriteArrayI16Ptr WriteArrayI16;
+    WriteArrayU16Ptr WriteArrayU16;
+    WriteArrayI64Ptr WriteArrayI64;
+    WriteArrayU64Ptr WriteArrayU64;
   } FunctionLoadStatus;
 
   nidevice_grpc::SharedLibrary shared_library_;

@@ -540,5 +540,81 @@ read_array_u64(const StubPtr& stub, const nidevice_grpc::Session& session, const
   return response;
 }
 
+WriteArrayI16Response
+write_array_i16(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const std::vector<pb::int32>& array, const pb::uint32& size)
+{
+  ::grpc::ClientContext context;
+
+  auto request = WriteArrayI16Request{};
+  request.mutable_session()->CopyFrom(session);
+  request.set_indicator(indicator);
+  copy_array(array, request.mutable_array());
+  request.set_size(size);
+
+  auto response = WriteArrayI16Response{};
+
+  raise_if_error(
+      stub->WriteArrayI16(&context, request, &response));
+
+  return response;
+}
+
+WriteArrayU16Response
+write_array_u16(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const std::vector<pb::uint32>& array, const pb::uint32& size)
+{
+  ::grpc::ClientContext context;
+
+  auto request = WriteArrayU16Request{};
+  request.mutable_session()->CopyFrom(session);
+  request.set_indicator(indicator);
+  copy_array(array, request.mutable_array());
+  request.set_size(size);
+
+  auto response = WriteArrayU16Response{};
+
+  raise_if_error(
+      stub->WriteArrayU16(&context, request, &response));
+
+  return response;
+}
+
+WriteArrayI64Response
+write_array_i64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const std::vector<pb::int64>& array, const pb::uint32& size)
+{
+  ::grpc::ClientContext context;
+
+  auto request = WriteArrayI64Request{};
+  request.mutable_session()->CopyFrom(session);
+  request.set_indicator(indicator);
+  copy_array(array, request.mutable_array());
+  request.set_size(size);
+
+  auto response = WriteArrayI64Response{};
+
+  raise_if_error(
+      stub->WriteArrayI64(&context, request, &response));
+
+  return response;
+}
+
+WriteArrayU64Response
+write_array_u64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const std::vector<pb::uint64>& array, const pb::uint32& size)
+{
+  ::grpc::ClientContext context;
+
+  auto request = WriteArrayU64Request{};
+  request.mutable_session()->CopyFrom(session);
+  request.set_indicator(indicator);
+  copy_array(array, request.mutable_array());
+  request.set_size(size);
+
+  auto response = WriteArrayU64Response{};
+
+  raise_if_error(
+      stub->WriteArrayU64(&context, request, &response));
+
+  return response;
+}
+
 
 } // namespace nifpga_grpc::experimental::client

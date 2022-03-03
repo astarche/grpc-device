@@ -771,6 +771,134 @@ namespace nifpga_grpc {
     }
   }
 
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteArrayI16(::grpc::ServerContext* context, const WriteArrayI16Request* request, WriteArrayI16Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      auto array_raw = request->array();
+      auto array = std::vector<int16_t>();
+      array.reserve(array_raw.size());
+      std::transform(
+        array_raw.begin(),
+        array_raw.end(),
+        std::back_inserter(array),
+        [](auto x) { 
+              if (x < std::numeric_limits<int16_t>::min() || x > std::numeric_limits<int16_t>::max()) {
+                  std::string message("value ");
+                  message.append(std::to_string(x));
+                  message.append(" doesn't fit in datatype ");
+                  message.append("int16_t");
+                  throw nidevice_grpc::ValueOutOfRangeException(message);
+              }
+              return static_cast<int16_t>(x);
+        });
+
+      size_t size = request->size();
+      auto status = library_->WriteArrayI16(session, indicator, array.data(), size);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+    catch (nidevice_grpc::ValueOutOfRangeException& ex) {
+      return ::grpc::Status(::grpc::OUT_OF_RANGE, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteArrayU16(::grpc::ServerContext* context, const WriteArrayU16Request* request, WriteArrayU16Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      auto array_raw = request->array();
+      auto array = std::vector<uint16_t>();
+      array.reserve(array_raw.size());
+      std::transform(
+        array_raw.begin(),
+        array_raw.end(),
+        std::back_inserter(array),
+        [](auto x) { 
+              if (x < std::numeric_limits<uint16_t>::min() || x > std::numeric_limits<uint16_t>::max()) {
+                  std::string message("value ");
+                  message.append(std::to_string(x));
+                  message.append(" doesn't fit in datatype ");
+                  message.append("uint16_t");
+                  throw nidevice_grpc::ValueOutOfRangeException(message);
+              }
+              return static_cast<uint16_t>(x);
+        });
+
+      size_t size = request->size();
+      auto status = library_->WriteArrayU16(session, indicator, array.data(), size);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+    catch (nidevice_grpc::ValueOutOfRangeException& ex) {
+      return ::grpc::Status(::grpc::OUT_OF_RANGE, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteArrayI64(::grpc::ServerContext* context, const WriteArrayI64Request* request, WriteArrayI64Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      auto array = const_cast<const int64_t*>(request->array().data());
+      size_t size = request->size();
+      auto status = library_->WriteArrayI64(session, indicator, array, size);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  ::grpc::Status NiFpgaService::WriteArrayU64(::grpc::ServerContext* context, const WriteArrayU64Request* request, WriteArrayU64Response* response)
+  {
+    if (context->IsCancelled()) {
+      return ::grpc::Status::CANCELLED;
+    }
+    try {
+      auto session_grpc_session = request->session();
+      NiFpga_Session session = session_repository_->access_session(session_grpc_session.id(), session_grpc_session.name());
+      uint32_t indicator = request->indicator();
+      auto array = const_cast<const uint64_t*>(request->array().data());
+      size_t size = request->size();
+      auto status = library_->WriteArrayU64(session, indicator, array, size);
+      response->set_status(status);
+      return ::grpc::Status::OK;
+    }
+    catch (nidevice_grpc::LibraryLoadException& ex) {
+      return ::grpc::Status(::grpc::NOT_FOUND, ex.what());
+    }
+  }
+
 
   NiFpgaFeatureToggles::NiFpgaFeatureToggles(
     const nidevice_grpc::FeatureToggles& feature_toggles)

@@ -46,6 +46,10 @@ class NiFpgaMockLibrary : public nifpga_grpc::NiFpgaLibraryInterface {
   MOCK_METHOD(NiFpga_Status, ReadArrayU16, (NiFpga_Session session, uint32_t indicator, uint16_t array[], size_t size), (override));
   MOCK_METHOD(NiFpga_Status, ReadArrayI64, (NiFpga_Session session, uint32_t indicator, int64_t array[], size_t size), (override));
   MOCK_METHOD(NiFpga_Status, ReadArrayU64, (NiFpga_Session session, uint32_t indicator, uint64_t array[], size_t size), (override));
+  MOCK_METHOD(NiFpga_Status, WriteArrayI16, (NiFpga_Session session, uint32_t indicator, const int16_t array[], size_t size), (override));
+  MOCK_METHOD(NiFpga_Status, WriteArrayU16, (NiFpga_Session session, uint32_t indicator, const uint16_t array[], size_t size), (override));
+  MOCK_METHOD(NiFpga_Status, WriteArrayI64, (NiFpga_Session session, uint32_t indicator, const int64_t array[], size_t size), (override));
+  MOCK_METHOD(NiFpga_Status, WriteArrayU64, (NiFpga_Session session, uint32_t indicator, const uint64_t array[], size_t size), (override));
 };
 
 }  // namespace unit

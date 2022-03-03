@@ -504,7 +504,6 @@ functions = {
     #                                  uint8_t*       array,
     #                                  size_t         size);
     'ReadArrayI16': {
-        #'codegen_method': 'CustomCode',
         'parameters': [
             {
                 'direction': 'in',
@@ -521,7 +520,6 @@ functions = {
                 'direction': 'out',
                 'name': 'array',
                 'type': 'int16_t[]',
-                #'grpc_type': 'repeated int32',
                 'size': {
                     'mechanism': 'passed-in',
                     'value': 'size'
@@ -536,7 +534,6 @@ functions = {
         'returns': 'NiFpga_Status',
     },
     'ReadArrayU16': {
-        #'codegen_method': 'CustomCode',
         'parameters': [
             {
                 'direction': 'in',
@@ -553,7 +550,6 @@ functions = {
                 'direction': 'out',
                 'name': 'array',
                 'type': 'uint16_t[]',
-                #'grpc_type': 'repeated uint32',
                 'size': {
                     'mechanism': 'passed-in',
                     'value': 'size'
@@ -576,7 +572,6 @@ functions = {
     # #                                   uint32_t*      array,
     # #                                   size_t         size);
     'ReadArrayI64': {
-        #'codegen_method': 'CustomCode',
         'parameters': [
             {
                 'direction': 'in',
@@ -593,7 +588,6 @@ functions = {
                 'direction': 'out',
                 'name': 'array',
                 'type': 'int64_t[]',
-                #'grpc_type': 'repeated int64',
                 'size': {
                     'mechanism': 'passed-in',
                     'value': 'size'
@@ -608,7 +602,6 @@ functions = {
         'returns': 'NiFpga_Status',
     },
     'ReadArrayU64': {
-        #'codegen_method': 'CustomCode',
         'parameters': [
             {
                 'direction': 'in',
@@ -625,7 +618,146 @@ functions = {
                 'direction': 'out',
                 'name': 'array',
                 'type': 'uint64_t[]',
-                #'grpc_type': 'repeated uint64',
+                'size': {
+                    'mechanism': 'passed-in',
+                    'value': 'size'
+                },
+            },
+            {
+                'direction': 'in',
+                'name': 'size',
+                'type': 'size_t',
+            }
+        ],
+        'returns': 'NiFpga_Status',
+    },
+
+    # Array Write functions
+    # NiFpga_Status NiFpga_WriteArrayBool(NiFpga_Session     session,
+    #                                     uint32_t           control,
+    #                                     const NiFpga_Bool* array,
+    #                                     size_t             size);
+    # NiFpga_Status NiFpga_WriteArrayI8(NiFpga_Session session,
+    #                                   uint32_t       control,
+    #                                   const int8_t*  array,
+    #                                   size_t         size);
+    # NiFpga_Status NiFpga_WriteArrayU8(NiFpga_Session session,
+    #                                   uint32_t       control,
+    #                                   const uint8_t* array,
+    #                                   size_t         size);
+    'WriteArrayI16': {
+        'parameters': [
+            {
+                'direction': 'in',
+                'name': 'session',
+                'type': 'NiFpga_Session',
+            },
+            {
+                'direction': 'in',
+                'name': 'indicator',
+                'type': 'uint32_t',
+            },
+            {
+                'coerced': True,
+                'direction': 'in',
+                'name': 'array',
+                'type': 'const int16_t[]',
+                'size': {
+                    'mechanism': 'passed-in',
+                    'value': 'size'
+                },
+            },
+            {
+                'direction': 'in',
+                'name': 'size',
+                'type': 'size_t',
+            }
+        ],
+        'returns': 'NiFpga_Status',
+    },
+    'WriteArrayU16': {
+        'parameters': [
+            {
+                'direction': 'in',
+                'name': 'session',
+                'type': 'NiFpga_Session',
+            },
+            {
+                'direction': 'in',
+                'name': 'indicator',
+                'type': 'uint32_t',
+            },
+            {
+                'coerced': True,
+                'direction': 'in',
+                'name': 'array',
+                'type': 'const uint16_t[]',
+                'size': {
+                    'mechanism': 'passed-in',
+                    'value': 'size'
+                },
+            },
+            {
+                'direction': 'in',
+                'name': 'size',
+                'type': 'size_t',
+            }
+        ],
+        'returns': 'NiFpga_Status',
+    },
+    # NiFpga_Status NiFpga_WriteArrayI32(NiFpga_Session session,
+    #                                    uint32_t       control,
+    #                                    const int32_t* array,
+    #                                    size_t         size);
+    # NiFpga_Status NiFpga_WriteArrayU32(NiFpga_Session  session,
+    #                                    uint32_t        control,
+    #                                    const uint32_t* array,
+    #                                    size_t          size);
+    'WriteArrayI64': {
+        'parameters': [
+            {
+                'direction': 'in',
+                'name': 'session',
+                'type': 'NiFpga_Session',
+            },
+            {
+                'direction': 'in',
+                'name': 'indicator',
+                'type': 'uint32_t',
+            },
+            {
+                'direction': 'in',
+                'name': 'array',
+                'type': 'const int64_t[]',
+                'size': {
+                    'mechanism': 'passed-in',
+                    'value': 'size'
+                },
+            },
+            {
+                'direction': 'in',
+                'name': 'size',
+                'type': 'size_t',
+            }
+        ],
+        'returns': 'NiFpga_Status',
+    },
+    'WriteArrayU64': {
+        'parameters': [
+            {
+                'direction': 'in',
+                'name': 'session',
+                'type': 'NiFpga_Session',
+            },
+            {
+                'direction': 'in',
+                'name': 'indicator',
+                'type': 'uint32_t',
+            },
+            {
+                'direction': 'in',
+                'name': 'array',
+                'type': 'const uint64_t[]',
                 'size': {
                     'mechanism': 'passed-in',
                     'value': 'size'

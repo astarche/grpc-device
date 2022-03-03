@@ -51,6 +51,10 @@ ReadArrayI16Response read_array_i16(const StubPtr& stub, const nidevice_grpc::Se
 ReadArrayU16Response read_array_u16(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const pb::uint32& size);
 ReadArrayI64Response read_array_i64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const pb::uint32& size);
 ReadArrayU64Response read_array_u64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const pb::uint32& size);
+WriteArrayI16Response write_array_i16(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const std::vector<pb::int32>& array, const pb::uint32& size);
+WriteArrayU16Response write_array_u16(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const std::vector<pb::uint32>& array, const pb::uint32& size);
+WriteArrayI64Response write_array_i64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const std::vector<pb::int64>& array, const pb::uint32& size);
+WriteArrayU64Response write_array_u64(const StubPtr& stub, const nidevice_grpc::Session& session, const pb::uint32& indicator, const std::vector<pb::uint64>& array, const pb::uint32& size);
 
 } // namespace nifpga_grpc::experimental::client
 
