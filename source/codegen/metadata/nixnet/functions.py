@@ -374,6 +374,7 @@ functions = {
     },
     'DbCloseDatabase': {
         'cname': 'nxdbCloseDatabase',
+        'custom_close_method': True,
         'parameters': [
             {
                 'direction': 'in',
@@ -389,7 +390,8 @@ functions = {
         'returns': 'nxStatus_t'
     },
     'DbCreateObject': {
-        'codegen_method': 'no',
+        'init_method': True,
+        'custom_close': "DbDeleteObject(id)",
         'cname': 'nxdbCreateObject',
         'parameters': [
             {
@@ -417,6 +419,7 @@ functions = {
     },
     'DbDeleteObject': {
         'cname': 'nxdbDeleteObject',
+        'custom_close_method': True,
         'parameters': [
             {
                 'direction': 'in',
@@ -453,8 +456,8 @@ functions = {
         'returns': 'nxStatus_t'
     },
     'DbFindObject': {
-        'codegen_method': 'no',
         'cname': 'nxdbFindObject',
+        'init_method': True,
         'parameters': [
             {
                 'direction': 'in',
@@ -472,7 +475,9 @@ functions = {
                 'type': 'const char[]'
             },
             {
+                'cross_driver_session': 'nxDatabaseRef_t',
                 'direction': 'out',
+                'grpc_type': 'nidevice_grpc.Session',
                 'name': 'dbObjectRef',
                 'type': 'nxDatabaseRef_t'
             }
@@ -702,6 +707,7 @@ functions = {
     'DbOpenDatabase': {
         'cname': 'nxdbOpenDatabase',
         'init_method': True,
+        'custom_close': 'DbCloseDatabase(id, false)',
         'parameters': [
             {
                 'direction': 'in',
@@ -1310,6 +1316,7 @@ functions = {
         'returns': 'nxStatus_t'
     },
     'SystemClose': {
+        'custom_close_method': True,
         'parameters': [
             {
                 'direction': 'in',
@@ -1321,6 +1328,7 @@ functions = {
     },
     'SystemOpen': {
         'init_method': True,
+        'custom_close': 'SystemClose(id)',
         'parameters': [
             {
                 'direction': 'out',
