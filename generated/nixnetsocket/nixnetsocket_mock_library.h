@@ -21,6 +21,8 @@ class NiXnetSocketMockLibrary : public nixnetsocket_grpc::NiXnetSocketLibraryInt
   MOCK_METHOD(int32_t, Close, (nxSOCKET socket), (override));
   MOCK_METHOD(int32_t, GetLastErrorNum, (), (override));
   MOCK_METHOD(char*, GetLastErrorStr, (char buf[], size_t bufLen), (override));
+  MOCK_METHOD(int32_t, IpStackClear, (nxIpStackRef_t stack_ref), (override));
+  MOCK_METHOD(int32_t, IpStackCreate, (char stack_name[], char config[], nxIpStackRef_t* stack_ref), (override));
   MOCK_METHOD(nxSOCKET, Socket, (nxIpStackRef_t stack_ref, int32_t domain, int32_t type, int32_t prototcol), (override));
 };
 

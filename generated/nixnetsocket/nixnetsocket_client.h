@@ -26,7 +26,9 @@ BindResponse bind(const StubPtr& stub, const nidevice_grpc::Session& socket, con
 CloseResponse close(const StubPtr& stub, const nidevice_grpc::Session& socket);
 GetLastErrorNumResponse get_last_error_num(const StubPtr& stub);
 GetLastErrorStrResponse get_last_error_str(const StubPtr& stub, const pb::uint64& buf_len);
-SocketResponse socket(const StubPtr& stub, const pb::int32& domain, const pb::int32& type, const pb::int32& prototcol);
+IpStackClearResponse ip_stack_clear(const StubPtr& stub, const nidevice_grpc::Session& stack_ref);
+IpStackCreateResponse ip_stack_create(const StubPtr& stub, const pb::string& stack_name, const pb::string& config);
+SocketResponse socket(const StubPtr& stub, const nidevice_grpc::Session& stack_ref, const pb::int32& domain, const pb::int32& type, const pb::int32& prototcol);
 
 } // namespace nixnetsocket_grpc::experimental::client
 
