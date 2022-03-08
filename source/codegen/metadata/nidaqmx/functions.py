@@ -9141,6 +9141,34 @@ functions = {
         ],
         'returns': 'int32'
     },
+    'ReadAnalogF64Custom': {
+        'nolibs': True,
+        'codegen_method': 'CustomCode',
+        'parameters': [
+            {
+                'direction': 'in',
+                'name': 'task',
+                'type': 'TaskHandle'
+            },
+            {
+                'direction': 'in',
+                'name': 'numSampsPerChan',
+                'type': 'int32'
+            },
+            {
+                'direction': 'in',
+                'name': 'timeout',
+                'type': 'float64'
+            },
+            {
+                'direction': 'in',
+                'enum': 'GroupBy',
+                'name': 'fillMode',
+                'type': 'int32'
+            }
+        ],
+        'returns': 'int32'
+    },
     'ReadAnalogF64': {
         'parameters': [
             {

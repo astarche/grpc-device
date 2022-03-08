@@ -257,6 +257,7 @@ service NiDAQmx {
   rpc GetWriteAttributeUInt64(GetWriteAttributeUInt64Request) returns (GetWriteAttributeUInt64Response);
   rpc IsTaskDone(IsTaskDoneRequest) returns (IsTaskDoneResponse);
   rpc LoadTask(LoadTaskRequest) returns (LoadTaskResponse);
+  rpc ReadAnalogF64Custom(ReadAnalogF64CustomRequest) returns (ReadAnalogF64CustomResponse);
   rpc ReadAnalogF64(ReadAnalogF64Request) returns (ReadAnalogF64Response);
   rpc ReadAnalogScalarF64(ReadAnalogScalarF64Request) returns (ReadAnalogScalarF64Response);
   rpc ReadBinaryI16(ReadBinaryI16Request) returns (ReadBinaryI16Response);
@@ -8236,6 +8237,20 @@ message LoadTaskRequest {
 message LoadTaskResponse {
   int32 status = 1;
   nidevice_grpc.Session task = 2;
+}
+
+message ReadAnalogF64CustomRequest {
+  nidevice_grpc.Session task = 1;
+  int32 num_samps_per_chan = 2;
+  double timeout = 3;
+  oneof fill_mode_enum {
+    GroupBy fill_mode = 4;
+    int32 fill_mode_raw = 5;
+  }
+}
+
+message ReadAnalogF64CustomResponse {
+  int32 status = 1;
 }
 
 message ReadAnalogF64Request {

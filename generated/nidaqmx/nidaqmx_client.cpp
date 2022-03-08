@@ -7070,6 +7070,32 @@ load_task(const StubPtr& stub, const pb::string& session_name)
   return response;
 }
 
+ReadAnalogF64CustomResponse
+read_analog_f64_custom(const StubPtr& stub, const nidevice_grpc::Session& task, const pb::int32& num_samps_per_chan, const double& timeout, const simple_variant<GroupBy, pb::int32>& fill_mode)
+{
+  ::grpc::ClientContext context;
+
+  auto request = ReadAnalogF64CustomRequest{};
+  request.mutable_task()->CopyFrom(task);
+  request.set_num_samps_per_chan(num_samps_per_chan);
+  request.set_timeout(timeout);
+  const auto fill_mode_ptr = fill_mode.get_if<GroupBy>();
+  const auto fill_mode_raw_ptr = fill_mode.get_if<pb::int32>();
+  if (fill_mode_ptr) {
+    request.set_fill_mode(*fill_mode_ptr);
+  }
+  else if (fill_mode_raw_ptr) {
+    request.set_fill_mode_raw(*fill_mode_raw_ptr);
+  }
+
+  auto response = ReadAnalogF64CustomResponse{};
+
+  raise_if_error(
+      stub->ReadAnalogF64Custom(&context, request, &response));
+
+  return response;
+}
+
 ReadAnalogF64Response
 read_analog_f64(const StubPtr& stub, const nidevice_grpc::Session& task, const pb::int32& num_samps_per_chan, const double& timeout, const simple_variant<GroupBy, pb::int32>& fill_mode, const pb::uint32& array_size_in_samps)
 {
