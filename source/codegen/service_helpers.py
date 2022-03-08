@@ -462,7 +462,9 @@ SessionRepositoryHandleTypeDependencyMap = Dict[str, CrossDriverSessionDependenc
 def get_driver_shared_resource_repository_ptr_deps(
     driver_config: dict, functions: dict
 ) -> SessionRepositoryHandleTypeDependencyMap:
-    """Get per-handle type CrossDriverSessionDependency for all
+    """Get map of shared repository deps.
+
+    Get per-handle type CrossDriverSessionDependency for all
     resource_handle_type and cross_driver_session types used by this driver.
     """
     resource_repository_deps = [
