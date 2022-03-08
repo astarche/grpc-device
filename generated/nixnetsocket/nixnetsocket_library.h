@@ -22,6 +22,8 @@ class NiXnetSocketLibrary : public nixnetsocket_grpc::NiXnetSocketLibraryInterfa
   int32_t Close(nxSOCKET socket);
   int32_t GetLastErrorNum();
   char* GetLastErrorStr(char buf[], size_t bufLen);
+  int32_t IpStackClear(nxIpStackRef_t stack_ref);
+  int32_t IpStackCreate(char stack_name[], char config[], nxIpStackRef_t* stack_ref);
   nxSOCKET Socket(nxIpStackRef_t stack_ref, int32_t domain, int32_t type, int32_t prototcol);
 
  private:
@@ -29,6 +31,8 @@ class NiXnetSocketLibrary : public nixnetsocket_grpc::NiXnetSocketLibraryInterfa
   using ClosePtr = decltype(&nxclose);
   using GetLastErrorNumPtr = decltype(&nxgetlasterrornum);
   using GetLastErrorStrPtr = decltype(&nxgetlasterrorstr);
+  using IpStackClearPtr = decltype(&nxIpStackClear);
+  using IpStackCreatePtr = decltype(&nxIpStackCreate);
   using SocketPtr = decltype(&nxsocket);
 
   typedef struct FunctionPointers {
@@ -36,6 +40,8 @@ class NiXnetSocketLibrary : public nixnetsocket_grpc::NiXnetSocketLibraryInterfa
     ClosePtr Close;
     GetLastErrorNumPtr GetLastErrorNum;
     GetLastErrorStrPtr GetLastErrorStr;
+    IpStackClearPtr IpStackClear;
+    IpStackCreatePtr IpStackCreate;
     SocketPtr Socket;
   } FunctionLoadStatus;
 
