@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 config = {
     'api_version': '20.0.0',
+    'additional_protos': ["data_moniker.proto"],
     'c_header': 'NIDAQmx.h',
     'c_function_prefix': 'DAQmx',
     'service_class_prefix': 'NiDAQmx',

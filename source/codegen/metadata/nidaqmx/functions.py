@@ -9165,7 +9165,13 @@ functions = {
                 'enum': 'GroupBy',
                 'name': 'fillMode',
                 'type': 'int32'
-            }
+            },
+            {
+                'direction': 'in',
+                'grpc_type': 'ni.data_monikers.Moniker',
+                'name': 'moniker',
+                'type': 'DO_NOT_USE'
+            },
         ],
         'returns': 'int32'
     },

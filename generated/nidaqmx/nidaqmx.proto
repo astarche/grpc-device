@@ -15,6 +15,7 @@ package nidaqmx_grpc;
 
 import "session.proto";
 import "google/protobuf/timestamp.proto";
+import "data_moniker.proto";
 
 service NiDAQmx {
   rpc AddCDAQSyncConnection(AddCDAQSyncConnectionRequest) returns (AddCDAQSyncConnectionResponse);

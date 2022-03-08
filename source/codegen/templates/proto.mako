@@ -33,6 +33,9 @@ import "session.proto";
 % if uses_timestamp:
 import "google/protobuf/timestamp.proto";
 % endif
+% for additional_proto in config.get("additional_protos", []):
+import "${additional_proto}";
+% endfor
 
 service ${service_class_prefix} {
 % for function in common_helpers.filter_proto_rpc_functions(functions):
