@@ -78,6 +78,9 @@ namespace ${config["namespace_component"]}_grpc {
 % endfor
       feature_toggles_(feature_toggles)
   {
+%if "custom_init" in config:
+    ${config["custom_init"]}();
+% endif
   }
 
   ${service_class_prefix}Service::~${service_class_prefix}Service()

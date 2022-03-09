@@ -34,6 +34,7 @@ namespace nidaqmx_grpc {
       session_repository_(session_repository),
       feature_toggles_(feature_toggles)
   {
+    initialize();
   }
 
   NiDAQmxService::~NiDAQmxService()

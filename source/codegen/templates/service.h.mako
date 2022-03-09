@@ -90,6 +90,9 @@ public:
 % endif
 % endfor
 private:
+%if "custom_init" in config:
+  void ${config["custom_init"]}();
+% endif
   ${driver_library_interface}* library_;
   ResourceRepositorySharedPtr session_repository_;
 % for cross_driver_dep in cross_driver_session_deps:

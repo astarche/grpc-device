@@ -9,6 +9,7 @@ config = {
     'csharp_namespace': 'NationalInstruments.Grpc.NiDAQmx',
     'namespace_component': 'nidaqmx',
     'close_function': 'ClearTask',
+    'custom_init': 'initialize',
     'custom_types': [
         {
             'name': 'AnalogPowerUpChannelsAndState',

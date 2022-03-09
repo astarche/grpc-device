@@ -430,6 +430,7 @@ public:
   ::grpc::Status WriteToTEDSFromArray(::grpc::ServerContext* context, const WriteToTEDSFromArrayRequest* request, WriteToTEDSFromArrayResponse* response) override;
   ::grpc::Status WriteToTEDSFromFile(::grpc::ServerContext* context, const WriteToTEDSFromFileRequest* request, WriteToTEDSFromFileResponse* response) override;
 private:
+  void initialize();
   NiDAQmxLibraryInterface* library_;
   ResourceRepositorySharedPtr session_repository_;
 

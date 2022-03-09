@@ -66,6 +66,8 @@ static void RunServer(const ServerConfiguration& config)
   grpc::EnableDefaultHealthCheckService(true);
   grpc::reflection::InitProtoReflectionServerBuilderPlugin();
 
+ 
+  // ni::MonikerServiceImpl monikerService;
   grpc::ServerBuilder builder;
   int listeningPort = 0;
   nidevice_grpc::ServerSecurityConfiguration server_security_config(config.server_cert, config.server_key, config.root_cert);
