@@ -8248,6 +8248,7 @@ message ReadAnalogF64CustomRequest {
     GroupBy fill_mode = 4;
     int32 fill_mode_raw = 5;
   }
+  ni.data_monikers.Moniker moniker = 6;
 }
 
 message ReadAnalogF64CustomResponse {

@@ -7071,7 +7071,7 @@ load_task(const StubPtr& stub, const pb::string& session_name)
 }
 
 ReadAnalogF64CustomResponse
-read_analog_f64_custom(const StubPtr& stub, const nidevice_grpc::Session& task, const pb::int32& num_samps_per_chan, const double& timeout, const simple_variant<GroupBy, pb::int32>& fill_mode)
+read_analog_f64_custom(const StubPtr& stub, const nidevice_grpc::Session& task, const pb::int32& num_samps_per_chan, const double& timeout, const simple_variant<GroupBy, pb::int32>& fill_mode, const ni::data_monikers::Moniker& moniker)
 {
   ::grpc::ClientContext context;
 
@@ -7087,6 +7087,7 @@ read_analog_f64_custom(const StubPtr& stub, const nidevice_grpc::Session& task, 
   else if (fill_mode_raw_ptr) {
     request.set_fill_mode_raw(*fill_mode_raw_ptr);
   }
+  request.mutable_moniker()->CopyFrom(moniker);
 
   auto response = ReadAnalogF64CustomResponse{};
 
