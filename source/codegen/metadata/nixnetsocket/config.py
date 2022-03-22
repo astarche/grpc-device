@@ -36,6 +36,8 @@ config = {
         'uint32_t': 'uint32',
         'uint16_t': 'uint16',
         'int64_t': 'int64',
+        'nxaddrinfo': 'repeated AddrInfo',
+        'nxlinger': 'Linger',
         'nxsockaddr': 'SockAddr',
         'nxtimeval': 'google.protobuf.Duration',
         'nxVirtualInterface_t': 'repeated VirtualInterface'

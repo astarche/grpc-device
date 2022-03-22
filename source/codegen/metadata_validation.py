@@ -75,6 +75,7 @@ PARAM_SCHEMA = Schema(
         Optional("callback_token"): bool,
         Optional("use_in_python_api"): bool,
         Optional("cross_driver_session"): str,
+        Optional("cpp_local_name"): str,
         Optional("grpc_name"): str,
         Optional("return_value"): bool,
         Optional("supports_standard_copy_convert"): bool,
@@ -160,6 +161,7 @@ ENUM_SCHEMA = Schema(
         Optional("generate-mappings"): bool,
         Optional("enum-value-prefix"): str,
         Optional("generate-mapping-type"): bool,
+        Optional("force-include"): bool,
     }
 )
 
@@ -339,6 +341,7 @@ def _validate_parameter_size(parameter: dict, function_name: str, metadata: dict
         mechanism = size["mechanism"]
         if mechanism in [
             "len",
+            "len-in-bytes",
             "ivi-dance",
             "ivi-dance-with-a-twist",
             "passed-in",
@@ -386,7 +389,7 @@ def _validate_parameter_size(parameter: dict, function_name: str, metadata: dict
                     f"parameter {parameter['name']} is an input but has mechanism {mechanism}!"
                 )
         else:
-            if mechanism == "len":
+            if mechanism in ["len", "len-in-bytes"]:
                 raise Exception(
                     f"parameter {parameter['name']} is an output but has mechanism {mechanism}!"
                 )
