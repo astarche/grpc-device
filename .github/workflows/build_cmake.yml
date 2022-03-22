@@ -54,7 +54,6 @@ jobs:
       uses: hendrikmuhs/ccache-action@v1
       with:
         key: ${{ matrix.config.os }}
-        variant: sccache
 
     - name: Configure
       shell: cmake -P {0}
@@ -71,8 +70,8 @@ jobs:
             -S .
             -B build
             -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
-            -D CMAKE_C_COMPILER_LAUNCHER=sccache 
-            -D CMAKE_CXX_COMPILER_LAUNCHER=sccache
+            -D CMAKE_C_COMPILER_LAUNCHER=ccache 
+            -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
             ${{ matrix.config.cmake_platform }}
           RESULT_VARIABLE result
         )
