@@ -31,7 +31,7 @@ jobs:
             build_type: "Release", cc: "gcc-9", cxx: "g++-9",
             cmake_platform: "",
             glibc_version: "2_27",
-            cmake_number_of_jobs: "-j 2"
+            cmake_number_of_jobs: "-j 2" 
           }
 
     steps:

@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.12.0)
 
 project(ni_grpc_device_server C CXX)
 
+if(MSVC)
+  set( CMAKE_C_COMPILER_LAUNCHER "${SCCACHE_EXECUTABLE}" )
+  set( CMAKE_CXX_COMPILER_LAUNCHER "${SCCACHE_EXECUTABLE}" )
+endif()
+
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CreateVirtualEnvironment)
 
