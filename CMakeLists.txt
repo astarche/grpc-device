@@ -2,9 +2,13 @@ cmake_minimum_required(VERSION 3.12.0)
 
 project(ni_grpc_device_server C CXX)
 
-if(MSVC)
-  set( CMAKE_C_COMPILER_LAUNCHER "${SCCACHE_EXECUTABLE}" )
-  set( CMAKE_CXX_COMPILER_LAUNCHER "${SCCACHE_EXECUTABLE}" )
+find_program(SCCACHE_PATH sccache)
+if(SCCACHE_PATH)
+  message(STATUS "Using sccache at ${SCCACHE_PATH}")
+  set(CMAKE_C_COMPILER_LAUNCHER ${SCCACHE_PATH})
+  set(CMAKE_CXX_COMPILER_LAUNCHER ${SCCACHE_PATH})
+else()
+  message(STATUS "Could not find sccache")
 endif()
 
 
