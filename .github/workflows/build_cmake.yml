@@ -50,6 +50,10 @@ jobs:
     - name: Update Submodules
       run: git submodule update --init --recursive --depth=1
 
+    - name: Add msbuild to PATH
+      if: ${{ (runner.os == 'Windows') }}
+      uses: microsoft/setup-msbuild@v1.1
+
     - name: Ninja
       uses: seanmiddleditch/gha-setup-ninja@v3
 
