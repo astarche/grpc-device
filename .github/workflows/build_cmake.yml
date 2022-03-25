@@ -66,8 +66,6 @@ jobs:
       shell: cmake -P {0}
       run: |
         execute_process(COMMAND sccache --show-stats)
-        set(ENV{CC} ${{ matrix.config.cc }})
-        set(ENV{CXX} ${{ matrix.config.cxx }})
         set(path_separator ":")
         if ("${{ runner.os }}" STREQUAL "Windows")
           set(path_separator ";")
