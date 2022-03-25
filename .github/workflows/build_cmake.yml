@@ -64,13 +64,7 @@ jobs:
 
     - name: Configure
       run: |
-          cmake
-            -B build
-            -G Ninja
-            -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
-            -D CMAKE_C_COMPILER_LAUNCHER=sccache 
-            -D CMAKE_CXX_COMPILER_LAUNCHER=sccache
-            ${{ matrix.config.cmake_platform }}
+          cmake -S . -B build -G Ninja -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE} -D CMAKE_C_COMPILER_LAUNCHER=sccache  -D CMAKE_CXX_COMPILER_LAUNCHER=sccache ${{ matrix.config.cmake_platform }}
 
     - name: cache stats
       run: sccache --show-stats
