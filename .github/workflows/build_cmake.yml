@@ -65,7 +65,6 @@ jobs:
     - name: Configure
       run: |
           cmake
-            -S .
             -B build
             -G Ninja
             -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
