@@ -20,7 +20,7 @@ jobs:
             name: "Windows Build", artifact: "Windows.tar.xz",
             os: windows-latest,
             build_type: "Release", cc: "gcc-9", cxx: "g++-9",
-            cmake_platform: "-A x64",
+            cmake_platform: "",
             # On msvc, the -j flag does not help build times and causes intermittent
             # file permission errors.
             cmake_number_of_jobs: ""
@@ -31,7 +31,7 @@ jobs:
             build_type: "Release", cc: "gcc-9", cxx: "g++-9",
             cmake_platform: "",
             glibc_version: "2_27",
-            cmake_number_of_jobs: "-j 2"
+            cmake_number_of_jobs: "-j 2" 
           }
 
     steps:
@@ -50,44 +50,35 @@ jobs:
     - name: Update Submodules
       run: git submodule update --init --recursive --depth=1
 
+    - name: Add msbuild to PATH
+      if: ${{ (runner.os == 'Windows') }}
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
+
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ${{ matrix.config.os }}
+        variant: sccache
+
+    - name: cache stats
+      run: sccache --show-stats
+
     - name: Configure
-      shell: cmake -P {0}
-      run: |
-        set(ENV{CC} ${{ matrix.config.cc }})
-        set(ENV{CXX} ${{ matrix.config.cxx }})
-        set(path_separator ":")
-        if ("${{ runner.os }}" STREQUAL "Windows")
-          set(path_separator ";")
-        endif()
-        set(ENV{PATH} "$ENV{GITHUB_WORKSPACE}${path_separator}$ENV{PATH}")
-        execute_process(
-          COMMAND cmake
-            -S .
-            -B build
-            -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE}
-            ${{ matrix.config.cmake_platform }}
-          RESULT_VARIABLE result
-        )
-        if (NOT result EQUAL 0)
-          message(FATAL_ERROR "Bad exit status")
-        endif()
+      shell: devCmd
+      run: cmake -S . -B build -G Ninja -D CMAKE_BUILD_TYPE=$ENV{BUILD_TYPE} -D CMAKE_C_COMPILER_LAUNCHER=sccache  -D CMAKE_CXX_COMPILER_LAUNCHER=sccache ${{ matrix.config.cmake_platform }}
+
+    - name: cache stats
+      run: sccache --show-stats
 
     - name: Build
-      shell: cmake -P {0}
-      run: |
-        execute_process(
-          COMMAND cmake --build build --config $ENV{BUILD_TYPE} ${{ matrix.config.cmake_number_of_jobs }}
-          RESULT_VARIABLE result
-          OUTPUT_VARIABLE output
-          ERROR_VARIABLE output
-          ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
-        )
-        if (NOT result EQUAL 0)
-          string(REGEX MATCH "FAILED:.*$" error_message "${output}")
-          string(REPLACE "\n" "%0A" error_message "${error_message}")
-          message("::error::${error_message}")
-          message(FATAL_ERROR "Build failed")
-        endif()
+      shell: devCmd
+      run: cmake --build build --config $ENV{BUILD_TYPE} ${{ matrix.config.cmake_number_of_jobs }}
+
+    - name: cache stats
+      run: sccache --show-stats
 
     # The generated source in git must match the output of workflow builds.
     # If this step fails, something is changing during build. Either:

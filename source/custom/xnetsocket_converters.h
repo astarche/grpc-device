@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <iostream>
 #include <memory>
 
 // Helper classes and overrides of standard conversion routines go in nixnetsocket_grpc.
@@ -388,6 +389,7 @@ inline TimeValInputConverter convert_from_grpc(const pb_::Duration& input)
 
 inline void convert_to_grpc(VirtualInterfaceOutputConverter& storage, pb_::RepeatedPtrField<VirtualInterface>* output)
 {
+  std::cout << "converting something" << std::endl;
   storage.to_grpc(*output);
 }
 

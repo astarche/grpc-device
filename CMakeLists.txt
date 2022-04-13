@@ -2,6 +2,25 @@ cmake_minimum_required(VERSION 3.12.0)
 
 project(ni_grpc_device_server C CXX)
 
+find_program(SCCACHE_PATH sccache)
+if(SCCACHE_PATH)
+  message(STATUS "Using sccache at ${SCCACHE_PATH}")
+  set(CMAKE_C_COMPILER_LAUNCHER ${SCCACHE_PATH})
+  set(CMAKE_CXX_COMPILER_LAUNCHER ${SCCACHE_PATH})
+  foreach (lang IN ITEMS C CXX)
+  if (CMAKE_${lang}_COMPILER_ID STREQUAL "MSVC")
+    foreach (build_type IN ITEMS DEBUG RELEASE RELWITHDEBINFO)
+      # The `/Zi` flag is incompatible with `sccache` because the separate
+      # `.pdb` files are not cached.
+      string(REPLACE "/Zi" "/Z7" "CMAKE_${lang}_FLAGS_${build_type}" "${CMAKE_${lang}_FLAGS_${build_type}}")
+    endforeach ()
+  endif ()
+endforeach ()
+else()
+  message(STATUS "Could not find sccache")
+endif()
+
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CreateVirtualEnvironment)
 
